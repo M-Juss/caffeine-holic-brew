@@ -272,6 +272,9 @@ export default function Home() {
           <div className="space-y-[20px]">
             <p>📍 STI Building, General Trias Drive, Rosario Cavite</p>
             <p>📞 (+63)993-592-4903</p>
+            <p>📧 chb-official@gmail.com</p>
+            <p>🕒 Monday - Friday: 9:00 AM - 5:00 PM</p>
+            <p>🕒 Saturday: 11:00 AM - 9:00 PM</p>
           </div>
           <form className=" w-full">
             <input

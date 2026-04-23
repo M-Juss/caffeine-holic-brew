@@ -68,14 +68,14 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <Link href="/register" className="mt-6 text-center text-sm text-[#475569]">
+        <Link
+          href="/register"
+          className="mt-6 text-center text-sm text-[#475569]"
+        >
           Don&apos;t have an account?
-          <a
-            href="#"
-            className="font-medium text-[#d97706] hover:text-[#b45309] underline"
-          >
+          <span className="font-medium text-[#d97706] hover:text-[#b45309] underline">
             Sign up
-          </a>
+          </span>
         </Link>
       </section>
     </main>
