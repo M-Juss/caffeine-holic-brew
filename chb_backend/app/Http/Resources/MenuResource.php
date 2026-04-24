@@ -16,10 +16,12 @@ class MenuResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'image_path' => Storage::url($this->image_path),
             'name' => $this->name,
             'description' => $this->description,
-            'is_available' => $this->is_available,       
+            'category' => $this->category,
+            'is_available' => $this->is_available,
             'sizes' => MenuSizeResource::collection($this->sizes)
         ];
     }

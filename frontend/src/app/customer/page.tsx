@@ -15,6 +15,9 @@ export default function CustomerPage() {
   const [activeTab, setActiveTab] = useState<TabKey>("menu");
 
   const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+    if (!confirmed) return;
+
     localStorage.removeItem("auth_token");
     localStorage.removeItem("authorization");
     router.push("/login");

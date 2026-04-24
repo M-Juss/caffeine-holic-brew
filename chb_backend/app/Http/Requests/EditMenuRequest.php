@@ -21,6 +21,7 @@ class EditMenuRequest extends FormRequest
             'description' => ['sometimes', 'string'],
 
             'category' => ['sometimes', 'string', 'in:Coffee,Non Coffee,Pastries,Snacks'],
+            'is_available' => ['sometimes', 'boolean'],
 
             'sizes' => ['sometimes', 'array'],
 

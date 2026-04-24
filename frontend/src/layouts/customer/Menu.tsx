@@ -1,7 +1,18 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import MenuCard from "@/components/common/MenuCard";
 import CartPanel from "@/components/common/CartPanel";
 import { toast } from "sonner";
+import { getMenus } from "@/services/menu.api";
+import { getFavorites, toggleFavorite } from "@/services/favorite.api";
+import {
+  addCartItem,
+  checkoutCart,
+  decreaseCartItem,
+  getCart,
+  increaseCartItem,
+  removeCartItem,
+  type CartResponseData,
+} from "@/services/cart.api";
 
 type MenuCategory = "Coffee" | "Non Coffee" | "Pastries" | "Snacks";
 
@@ -17,6 +28,7 @@ interface MenuItem {
   description: string;
   image: string;
   category: MenuCategory;
+  available: boolean;
   sizes: MenuSize[];
 }
 
@@ -31,152 +43,40 @@ interface CartItem {
   image: string;
 }
 
-const mockMenu = [
-  {
-    id: 1,
-    name: "Espresso",
-    description: "Rich and bold single shot",
-    image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 1, size: "Small", price: 2.5 },
-      { id: 2, size: "Medium", price: 3.5 },
-      { id: 3, size: "Large", price: 4.5 },
-    ],
-  },
-  {
-    id: 2,
-    name: "Cappuccino",
-    description: "Espresso with steamed milk foam",
-    image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 4, size: "Small", price: 3.5 },
-      { id: 5, size: "Medium", price: 4.5 },
-      { id: 6, size: "Large", price: 5.5 },
-    ],
-  },
-  {
-    id: 3,
-    name: "Latte",
-    description: "Smooth espresso with steamed milk",
-    image: "https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 7, size: "Small", price: 3.8 },
-      { id: 8, size: "Medium", price: 4.8 },
-      { id: 9, size: "Large", price: 5.8 },
-    ],
-  },
-  {
-    id: 4,
-    name: "Americano",
-    description: "Espresso with hot water",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 10, size: "Small", price: 2.8 },
-      { id: 11, size: "Medium", price: 3.8 },
-      { id: 12, size: "Large", price: 4.8 },
-    ],
-  },
-  {
-    id: 5,
-    name: "Mocha",
-    description: "Chocolate and espresso blend",
-    image: "https://images.unsplash.com/photo-1578374173705-7d1a0a3a82b3?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 13, size: "Small", price: 4.0 },
-      { id: 14, size: "Medium", price: 5.0 },
-      { id: 15, size: "Large", price: 6.0 },
-    ],
-  },
-  {
-    id: 6,
-    name: "Macchiato",
-    description: "Espresso with a dollop of foam",
-    image: "https://images.unsplash.com/photo-1557006021-b85faa2bc5e2?w=400",
-    category: "Coffee",
-    sizes: [
-      { id: 16, size: "Small", price: 3.2 },
-      { id: 17, size: "Medium", price: 4.2 },
-      { id: 18, size: "Large", price: 5.2 },
-    ],
-  },
-  {
-    id: 7,
-    name: "Iced Matcha Latte",
-    description: "Creamy matcha with milk served over ice",
-    image: "https://images.unsplash.com/photo-1627998792088-f8016b438988?w=400",
-    category: "Non Coffee",
-    sizes: [
-      { id: 19, size: "Small", price: 3.7 },
-      { id: 20, size: "Medium", price: 4.7 },
-      { id: 21, size: "Large", price: 5.7 },
-    ],
-  },
-  {
-    id: 8,
-    name: "Chocolate Croissant",
-    description: "Buttery flaky croissant with chocolate filling",
-    image: "https://images.unsplash.com/photo-1623334044303-241021148842?w=400",
-    category: "Pastries",
-    sizes: [
-      { id: 22, size: "1 pc", price: 2.9 },
-      { id: 23, size: "2 pcs", price: 5.4 },
-      { id: 24, size: "4 pcs", price: 9.9 },
-    ],
-  },
-  {
-    id: 9,
-    name: "Blueberry Muffin",
-    description: "Soft muffin packed with blueberry bits",
-    image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=400",
-    category: "Pastries",
-    sizes: [
-      { id: 25, size: "1 pc", price: 2.5 },
-      { id: 26, size: "2 pcs", price: 4.6 },
-      { id: 27, size: "4 pcs", price: 8.5 },
-    ],
-  },
-  {
-    id: 10,
-    name: "Cheese Toasties",
-    description: "Crispy toasted bread with melted cheese",
-    image: "https://images.unsplash.com/photo-1536816579748-4ecb3f03d72a?w=400",
-    category: "Snacks",
-    sizes: [
-      { id: 28, size: "Regular", price: 3.6 },
-      { id: 29, size: "Double", price: 5.4 },
-      { id: 30, size: "Share", price: 9.8 },
-    ],
-  },
-  {
-    id: 11,
-    name: "Nacho Bites",
-    description: "Crispy nachos with creamy cheese dip",
-    image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=400",
-    category: "Snacks",
-    sizes: [
-      { id: 31, size: "Regular", price: 3.9 },
-      { id: 32, size: "Large", price: 5.9 },
-      { id: 33, size: "Party", price: 10.5 },
-    ],
-  },
-  {
-    id: 12,
-    name: "Strawberry Milkshake",
-    description: "Refreshing milkshake with real strawberry bits",
-    image: "https://images.unsplash.com/photo-1579954115563-e72bf1381629?w=400",
-    category: "Non Coffee",
-    sizes: [
-      { id: 34, size: "Small", price: 3.4 },
-      { id: 35, size: "Medium", price: 4.4 },
-      { id: 36, size: "Large", price: 5.4 },
-    ],
-  },
-] satisfies MenuItem[];
+function resolveImageUrl(imagePath: string): string {
+  if (!imagePath) return "";
+  if (/^(https?:|blob:|data:)/i.test(imagePath)) return imagePath;
+
+  const normalizedPath = imagePath.startsWith("/")
+    ? imagePath
+    : imagePath.startsWith("storage/")
+      ? `/${imagePath}`
+      : `/storage/${imagePath}`;
+
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) return normalizedPath;
+    const origin = new URL(apiUrl).origin;
+    return `${origin}${normalizedPath}`;
+  } catch {
+    return normalizedPath;
+  }
+}
+
+function mapCartItems(cart: CartResponseData | null): CartItem[] {
+  if (!cart?.items?.length) return [];
+
+  return cart.items.map((item) => ({
+    id: item.id,
+    menuId: item.menu_id,
+    sizeId: item.id,
+    name: item.name,
+    size: item.size,
+    price: Number(item.price),
+    quantity: item.quantity,
+    image: resolveImageUrl(item.image_path),
+  }));
+}
 
 export default function Menu() {
   const categories: MenuCategory[] = [
@@ -187,69 +87,148 @@ export default function Menu() {
   ];
 
   const [activeCategory, setActiveCategory] = useState<MenuCategory>("Coffee");
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [isLoadingMenus, setIsLoadingMenus] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const filteredMenu = mockMenu.filter((item) => item.category === activeCategory);
+  const filteredMenu = useMemo(
+    () =>
+      menuItems.filter(
+        (item) =>
+          item.available && item.category === activeCategory && item.sizes.length > 0
+      ),
+    [activeCategory, menuItems]
+  );
 
-  const handleAddToCart = (itemId: number, size: MenuSize) => {
-    const menuItem = mockMenu.find((item) => item.id === itemId);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoadingMenus(true);
+        const [menuResponse, favoriteResponse, cartResponse] = await Promise.all([
+          getMenus(),
+          getFavorites(),
+          getCart(),
+        ]);
+
+        const menus: MenuItem[] = menuResponse.data.map((menu) => ({
+          id: menu.id,
+          name: menu.name,
+          description: menu.description,
+          image: resolveImageUrl(menu.image_path),
+          category: menu.category,
+          available: menu.is_available,
+          sizes: menu.sizes.map((size, index) => ({
+            id: menu.id * 1000 + index + 1,
+            size: size.size,
+            price: Number(size.price),
+          })),
+        }));
+
+        const favoriteIds = favoriteResponse.data
+          .map((favorite) => favorite.menu_id)
+          .filter((menuId) => Number.isFinite(menuId));
+
+        setMenuItems(menus);
+        setFavorites(favoriteIds);
+        setCartItems(mapCartItems(cartResponse.data));
+      } catch (error) {
+        const err = error as Error;
+        toast.error(err.message || "Failed to load menu data.");
+      } finally {
+        setIsLoadingMenus(false);
+      }
+    };
+
+    void loadData();
+  }, []);
+
+  const handleAddToCart = async (itemId: number, size: MenuSize) => {
+    const menuItem = menuItems.find((item) => item.id === itemId);
     if (!menuItem) return;
 
-    const existingItem = cartItems.find(
-      (item) => item.menuId === itemId && item.sizeId === size.id
-    );
-
-    if (existingItem) {
-      setCartItems(
-        cartItems.map((item) =>
-          item.id === existingItem.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-    } else {
-      const newItem = {
-        id: Date.now(),
-        menuId: itemId,
-        sizeId: size.id,
-        name: menuItem.name,
+    try {
+      const response = await addCartItem({
+        menu_id: itemId,
         size: size.size,
-        price: size.price,
         quantity: 1,
-        image: menuItem.image,
-      };
-      setCartItems([...cartItems, newItem]);
+      });
+      setCartItems(mapCartItems(response.data));
+      toast.success(`${menuItem.name} (${size.size}) added to cart`);
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message || "Failed to add item to cart.");
     }
-    toast.success(`${menuItem.name} (${size.size}) added to cart`);
   };
 
-  const handleUpdateQuantity = (id: number, quantity: number) => {
+  const handleUpdateQuantity = async (id: number, quantity: number) => {
+    const targetItem = cartItems.find((item) => item.id === id);
+    if (!targetItem) return;
+
     if (quantity === 0) {
-      handleRemoveItem(id);
+      await handleRemoveItem(id);
     } else {
-      setCartItems(
-        cartItems.map((item) => (item.id === id ? { ...item, quantity } : item))
-      );
+      try {
+        const response =
+          quantity > targetItem.quantity
+            ? await increaseCartItem(id)
+            : await decreaseCartItem(id);
+
+        setCartItems(mapCartItems(response.data));
+      } catch (error) {
+        const err = error as Error;
+        toast.error(err.message || "Failed to update item quantity.");
+      }
     }
   };
 
-  const handleRemoveItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-    toast.info("Item removed from cart");
+  const handleRemoveItem = async (id: number) => {
+    try {
+      const response = await removeCartItem(id);
+      setCartItems(mapCartItems(response.data));
+      toast.info("Item removed from cart");
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message || "Failed to remove item from cart.");
+    }
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (cartItems.length === 0) return;
-    toast.success("Order placed successfully!");
-    setCartItems([]);
+
+    try {
+      const response = await checkoutCart();
+      toast.success(response.message || "Order placed successfully.");
+      setCartItems([]);
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message || "Checkout failed.");
+    }
   };
 
-  const handleToggleFavorite = (itemId: number) => {
+  const handleToggleFavorite = async (itemId: number) => {
+    const wasFavorite = favorites.includes(itemId);
+
     setFavorites((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
+      wasFavorite ? prev.filter((id) => id !== itemId) : [...prev, itemId]
     );
+
+    try {
+      const response = await toggleFavorite({ menu_id: itemId });
+      setFavorites((prev) =>
+        response.is_favorited
+          ? prev.includes(itemId)
+            ? prev
+            : [...prev, itemId]
+          : prev.filter((id) => id !== itemId)
+      );
+      toast.success(response.message);
+    } catch (error) {
+      setFavorites((prev) =>
+        wasFavorite ? [...prev, itemId] : prev.filter((id) => id !== itemId)
+      );
+      const err = error as Error;
+      toast.error(err.message || "Failed to update favorite.");
+    }
   };
 
   return (
@@ -271,17 +250,27 @@ export default function Menu() {
             </button>
           ))}
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredMenu.map((item) => (
-            <MenuCard
-              key={item.id}
-              {...item}
-              isFavorite={favorites.includes(item.id)}
-              onAddToCart={handleAddToCart}
-              onToggleFavorite={handleToggleFavorite}
-            />
-          ))}
-        </div>
+        {isLoadingMenus ? (
+          <div className="text-[#A8A8A8] text-sm">Loading menu...</div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {filteredMenu.length > 0 ? (
+              filteredMenu.map((item) => (
+                <MenuCard
+                  key={item.id}
+                  {...item}
+                  isFavorite={favorites.includes(item.id)}
+                  onAddToCart={handleAddToCart}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              ))
+            ) : (
+              <div className="text-[#A8A8A8] text-sm">
+                No available items in this category yet.
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="w-96">

@@ -26,9 +26,10 @@ export function LoginForm() {
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      await loginUser(values.email, values.password);
+      const response = await loginUser(values.email, values.password);
       toast.success("Login successful.");
-      router.push("/customer");
+      const role = (response?.data?.role ?? "").toLowerCase();
+      router.push(role === "admin" ? "/admin" : "/customer");
     } catch (error) {
       const err = error as Error & {
         errors?: Record<string, string[] | string>;
