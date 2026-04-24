@@ -2,16 +2,23 @@
 
 import { useState, type ElementType } from "react";
 import { Coffee, Heart, LogOut, ShoppingBag, User } from "lucide-react";
-import Link from "next/link";
-import Menu from "@/layout/customer/Menu";
-import Favorites from "@/layout/customer/Favorites";
-import MyOrders from "@/layout/customer/MyOrder";
-import Profile from "@/layout/customer/Profile";
+import { useRouter } from "next/navigation";
+import Menu from "@/layouts/customer/Menu";
+import Favorites from "@/layouts/customer/Favorites";
+import MyOrders from "@/layouts/customer/MyOrder";
+import Profile from "@/layouts/customer/Profile";
 
 type TabKey = "menu" | "orders" | "favorites" | "profile";
 
 export default function CustomerPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("menu");
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("authorization");
+    router.push("/login");
+  };
 
   const navItems: { key: TabKey; icon: ElementType; label: string }[] = [
     { key: "menu", icon: Coffee, label: "Menu / Order" },
@@ -24,7 +31,9 @@ export default function CustomerPage() {
     <div className="h-screen w-full flex overflow-hidden bg-[#F5F5F5]">
       <aside className="w-70 shrink-0 h-screen bg-[#2A231F] flex flex-col justify-between text-sm sticky top-0">
         <div className="p-5 border-b border-[#3A322D]">
-          <h1 className="font-bold text-[#F7F1E8] text-2xl">Caffeine Holic</h1>
+          <h1 className="font-bold text-[#F7F1E8] text-xl">
+            ☕ Caffeine Holic Brew
+          </h1>
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -46,13 +55,14 @@ export default function CustomerPage() {
         </nav>
 
         <div className="p-4 border-t border-[#3A322D]">
-          <Link
-            href="/"
+          <button
+            type="button"
+            onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#D8CCC0] hover:bg-[#3A322D] hover:text-white transition-colors"
           >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
 

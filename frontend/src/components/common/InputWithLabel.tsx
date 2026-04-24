@@ -7,12 +7,25 @@ type InputWithLabelProps = Omit<React.ComponentProps<"input">, "readOnly" | "dis
   label: string;
   icon?: React.ReactNode;
   disabled?: boolean;
+  containerClassName?: string;
 };
 
 export const InputWithLabel = React.forwardRef<HTMLInputElement, InputWithLabelProps>(
-  ({ id, label, placeholder, icon, type = "text", disabled = false, ...props }, ref) => {
+  (
+    {
+      id,
+      label,
+      placeholder,
+      icon,
+      type = "text",
+      disabled = false,
+      containerClassName,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div className="grid w-full gap-2">
+      <div className={`grid w-full gap-2 ${containerClassName ?? ""}`}>
         <Label htmlFor={id}>
           {icon}
           {label}

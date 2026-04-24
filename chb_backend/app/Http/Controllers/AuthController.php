@@ -20,7 +20,8 @@ class AuthController extends Controller
                 return User::create([
                     'username' => $request->validated('username'),
                     'email'    => $request->validated('email'),
-                    'password' => $request->validated('password')
+                    'password' => $request->validated('password'),
+                    'role' => $request->validated('role')
                 ]);
             });
 

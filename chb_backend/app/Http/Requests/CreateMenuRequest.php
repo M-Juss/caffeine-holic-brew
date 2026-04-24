@@ -15,11 +15,13 @@ class CreateMenuRequest extends FormRequest
     {
         return [
             'image' => ['required', 'image', 'mimes:png,jpg,jpeg'],
-            'name' => ['required', 'string'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'sizes' => ['required', 'array'],
-            'sizes.*.menu' => ['required', 'string'],
-            'sizes.*.price' => ['required', 'numeric'],
+            'category' => ['required', 'string', 'in:Coffee,Non Coffee,Pastries,Snacks'],
+            'is_available' => ['required', 'boolean'],
+            'sizes' => ['required', 'array', 'min:1'],
+            'sizes.*.name' => ['required', 'string', 'max:255'],
+            'sizes.*.price' => ['required', 'numeric', 'min:0.01'],
         ];
     }
 
@@ -32,13 +34,19 @@ class CreateMenuRequest extends FormRequest
 
             'name.required' => 'Menu name is required.',
             'description.required' => 'Description is required.',
+            'category.required' => 'Category is required.',
+            'category.in' => 'Category must be Coffee, Non Coffee, Pastries, or Snacks.',
+            'is_available.required' => 'Availability is required.',
+            'is_available.boolean' => 'Availability must be true or false.',
 
             'sizes.required' => 'Please provide at least one size option.',
             'sizes.array' => 'Sizes must be in a valid format.',
+            'sizes.min' => 'Please provide at least one size option.',
 
-            'sizes.*.menu.required' => 'Each size must have a name.',
+            'sizes.*.name.required' => 'Each size must have a name.',
             'sizes.*.price.required' => 'Each size must have a price.',
             'sizes.*.price.numeric' => 'Price must be a valid number.',
+            'sizes.*.price.min' => 'Price must be greater than zero.',
         ];
     }
 }
