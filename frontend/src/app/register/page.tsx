@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RegisterForm } from "@/forms/RegisterForm";
 
 export default function RegisterPage() {
   return (
@@ -16,57 +17,15 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <form className="space-y-5">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#334155]">Username</label>
-            <input
-              type="text"
-              placeholder="Username"
-              className="w-full rounded-[16px] border border-[#e2e8f0] bg-[#f9f5f1] px-4 py-3 text-sm text-[#0f172a] outline-none transition focus:border-[#f59e0b] focus:ring-2 focus:ring-[#fde68a]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#334155]">Email address</label>
-            <input
-              type="email"
-              placeholder="email@example.com"
-              className="w-full rounded-[16px] border border-[#e2e8f0] bg-[#f9f5f1] px-4 py-3 text-sm text-[#0f172a] outline-none transition focus:border-[#f59e0b] focus:ring-2 focus:ring-[#fde68a]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#334155]">Password</label>
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full rounded-[16px] border border-[#e2e8f0] bg-[#f9f5f1] px-4 py-3 text-sm text-[#0f172a] outline-none transition focus:border-[#f59e0b] focus:ring-2 focus:ring-[#fde68a]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#334155]">Confirm password</label>
-            <input
-              type="password"
-              placeholder="Confirm password"
-              className="w-full rounded-[16px] border border-[#e2e8f0] bg-[#f9f5f1] px-4 py-3 text-sm text-[#0f172a] outline-none transition focus:border-[#f59e0b] focus:ring-2 focus:ring-[#fde68a]"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full rounded-[16px] bg-[#f59e0b] px-4 py-3 text-base font-semibold text-white transition hover:bg-[#ea580c]"
-          >
-            Sign up
-          </button>
-        </form>
-
+        <RegisterForm/>
+        
         <Link href="/login" className="mt-6 text-center text-sm text-[#475569]">
           Already have an account?
-          <a href="#" className="font-medium text-[#d97706] hover:text-[#b45309] underline">
+          <span className="font-medium text-[#d97706] hover:text-[#b45309] underline">
             Log in
-          </a>
+          </span>
         </Link>
+
       </section>
     </main>
   );

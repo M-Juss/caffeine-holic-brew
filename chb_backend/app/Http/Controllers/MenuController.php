@@ -43,12 +43,12 @@ class MenuController extends Controller
                     'image_path' => $imagePath,
                     'name' => $data['name'],
                     'description' => $data['description'],
-                    'is_available' => $data['is_available'] ?? true
+                    'is_available' => (bool) $data['is_available']
                 ]);
 
                 foreach ($data['sizes'] as $size) {
                     $menu->sizes()->create([
-                        'size' => $size['menu'],  
+                        'size' => $size['name'],
                         'price' => $size['price'],
                     ]);
                 }
