@@ -21,8 +21,8 @@ return new class extends Migration
             $table->text('customer_remarks')->nullable();
             
             $table->string('status')->default('pending');
-            $table->foreignId('reviewed_by')->constrained('users')->cascadeOnDelete();
-            $table->timestamp('reviewed_at');
+            $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('reviewed_at')->nullable();
             $table->text('reviwer_remarks')->nullable();
             $table->timestamps();
         });
