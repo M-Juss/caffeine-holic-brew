@@ -43,7 +43,8 @@ class MenuController extends Controller
                     'image_path' => $imagePath,
                     'name' => $data['name'],
                     'description' => $data['description'],
-                    'is_available' => (bool) $data['is_available']
+                    'is_available' => (bool) $data['is_available'],
+                    'category' => $data['category'] ?? 'Coffee',
                 ]);
 
                 foreach ($data['sizes'] as $size) {
@@ -90,6 +91,7 @@ class MenuController extends Controller
                     'description' => $data['description'] ?? $menu->description,
                     'image_path' => $data['image_path'] ?? $menu->image_path,
                     'is_available' => $data['is_available'] ?? $menu->is_available,
+                    'category' => $data['category'] ?? 'Coffee',
                 ]);
 
                 if (isset($data['sizes'])) {

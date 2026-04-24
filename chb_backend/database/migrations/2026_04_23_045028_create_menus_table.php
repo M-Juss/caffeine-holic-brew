@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->boolean('is_available')->default(true);
+            $table->string('category')->default('Coffee');
             $table->timestamps();
         });
     }

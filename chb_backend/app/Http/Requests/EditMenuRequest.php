@@ -20,6 +20,8 @@ class EditMenuRequest extends FormRequest
             'name' => ['sometimes', 'string'],
             'description' => ['sometimes', 'string'],
 
+            'category' => ['sometimes', 'string', 'in:Coffee,Non Coffee,Pastries,Snacks'],
+
             'sizes' => ['sometimes', 'array'],
 
             'sizes.*.menu' => ['required_with:sizes', 'string'],

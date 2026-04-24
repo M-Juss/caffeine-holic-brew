@@ -16,6 +16,7 @@ class Menu extends Model
         'name',
         'description',
         'is_available',
+        'category',
     ];
 
     public function sizes(): HasMany
