@@ -106,7 +106,7 @@ class OrderController extends Controller
         $order->update(['status' => 'cancelled']);
 
         return response()->json([
-            'message' => 'Order cancelled successfully.',
+            'message' => 'Order cancelled successfully.', 
             'data'    => $order->fresh('items'),
         ]);
     }
