@@ -11,6 +11,13 @@ class OrderController extends Controller
 {
     const STATUSES = ['pending', 'accepted', 'preparing', 'completed', 'cancelled'];
 
+    private array $relations = [
+        'items',
+        'user:id,username,email',
+        'reviewer:id,username',
+        'assigned_rider:id,username',
+    ];
+
     // admin
     public function index(Request $request): JsonResponse
     {
@@ -18,7 +25,7 @@ class OrderController extends Controller
             'status' => ['nullable', Rule::in(self::STATUSES)],
         ]);
 
-        $orders = Order::with(['items', 'user:id,username,email'])
+        $orders = Order::with($this->relations)
             ->when($request->status, fn($q) => $q->where('status', $request->status))
             ->latest()
             ->paginate(15);
@@ -36,7 +43,7 @@ class OrderController extends Controller
             'status' => ['nullable', Rule::in(self::STATUSES)],
         ]);
 
-        $orders = Order::with(['items', 'user:id,username,email'])
+        $orders = Order::with($this->relations)
             ->where('user_id', $request->user()->id)
             ->when($request->status, fn($q) => $q->where('status', $request->status))
             ->latest()
@@ -57,7 +64,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Order retrieved successfully.',
-            'data'    => $order->load(['items', 'user:id,username,email']),
+            'data'    => $order->load($this->relations),
         ]);
     }
 
@@ -81,12 +88,12 @@ class OrderController extends Controller
             'status'           => $newStatus,
             'reviewed_by'      => $request->user()->id,
             'reviewed_at'      => now(),
-            'reviwer_remarks'  => $request->reviewer_remarks,
+            'reviewer_remarks' => $request->reviewer_remarks, 
         ]);
 
         return response()->json([
             'message' => "Order status updated to '{$newStatus}'.",
-            'data'    => $order->fresh(['items', 'user:id,username,email']),
+            'data'    => $order->fresh($this->relations),
         ]);
     }
 
@@ -106,8 +113,8 @@ class OrderController extends Controller
         $order->update(['status' => 'cancelled']);
 
         return response()->json([
-            'message' => 'Order cancelled successfully.', 
-            'data'    => $order->fresh(['items', 'user:id,username,email']),
+            'message' => 'Order cancelled successfully.',
+            'data'    => $order->fresh($this->relations),
         ]);
     }
 
