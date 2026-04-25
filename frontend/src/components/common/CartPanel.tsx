@@ -64,7 +64,7 @@ export default function CartPanel({ items, onUpdateQuantity, onRemove, onCheckou
                     </button>
                   </div>
                 </div>
-                <div className="text-[#D4A156]">${item.price.toFixed(2)}</div>
+                <div className="text-[#D4A156]">₱ {item.price.toFixed(2)}</div>
               </div>
             ))}
           </div>
@@ -76,7 +76,7 @@ export default function CartPanel({ items, onUpdateQuantity, onRemove, onCheckou
             </div>
             <div className="flex justify-between text-lg">
               <span className="text-[#5C5C5C]">Total Amount:</span>
-              <span className="text-[#D4A156]">${totalAmount.toFixed(2)}</span>
+              <span className="text-[#D4A156]">₱ {totalAmount.toFixed(2)}</span>
             </div>
           </div>
 

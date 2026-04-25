@@ -129,7 +129,7 @@ export default function MenuAdminCard({
                     key={size.id}
                     className="px-4 py-2 bg-[#F5F5F5] rounded-lg text-sm text-[#5C5C5C]"
                   >
-                    {size.name}: ₱{size.price.toFixed(2)}
+                    {size.name}: ₱ {size.price.toFixed(2)}
                   </div>
                 ))
               ) : (
