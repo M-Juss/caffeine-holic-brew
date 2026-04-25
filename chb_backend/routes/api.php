@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth:sanctum')->group(function(){
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::patch('/profile/password', [AuthController::class, 'changePassword']);
+
     Route::post('/testimonial', [TestimonialController::class, 'store']);
     Route::delete('/testimonial/{testimonial}', [TestimonialController::class, 'removeTestimonial']);
 

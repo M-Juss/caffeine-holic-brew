@@ -65,7 +65,7 @@ export default function MenuCard({
                 }`}
               >
                 <div className="text-sm">{size.size}</div>
-                <div className="text-xs">${size.price.toFixed(2)}</div>
+                <div className="text-xs">₱ {size.price.toFixed(2)}</div>
               </button>
             ))}
           </div>
@@ -75,7 +75,7 @@ export default function MenuCard({
           onClick={() => onAddToCart(id, selectedSize)}
           className="w-full bg-[#D4A156] hover:bg-[#C59145] text-white rounded-xl"
         >
-          Add to Cart - ${selectedSize.price.toFixed(2)}
+          Add to Cart - ₱ {selectedSize.price.toFixed(2)}
         </Button>
       </div>
     </div>

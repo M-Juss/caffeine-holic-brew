@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    const STATUSES = ['pending', 'accepted', 'preparing', 'completed'];
+    const STATUSES = ['pending', 'accepted', 'preparing', 'completed', 'cancelled'];
 
     // admin
     public function index(Request $request): JsonResponse
@@ -18,7 +18,7 @@ class OrderController extends Controller
             'status' => ['nullable', Rule::in(self::STATUSES)],
         ]);
 
-        $orders = Order::with('items')
+        $orders = Order::with(['items', 'user:id,username,email'])
             ->when($request->status, fn($q) => $q->where('status', $request->status))
             ->latest()
             ->paginate(15);
@@ -36,7 +36,7 @@ class OrderController extends Controller
             'status' => ['nullable', Rule::in(self::STATUSES)],
         ]);
 
-        $orders = Order::with('items')
+        $orders = Order::with(['items', 'user:id,username,email'])
             ->where('user_id', $request->user()->id)
             ->when($request->status, fn($q) => $q->where('status', $request->status))
             ->latest()
@@ -57,7 +57,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Order retrieved successfully.',
-            'data'    => $order->load('items'),
+            'data'    => $order->load(['items', 'user:id,username,email']),
         ]);
     }
 
@@ -86,7 +86,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => "Order status updated to '{$newStatus}'.",
-            'data'    => $order->fresh('items'),
+            'data'    => $order->fresh(['items', 'user:id,username,email']),
         ]);
     }
 
@@ -107,7 +107,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => 'Order cancelled successfully.', 
-            'data'    => $order->fresh('items'),
+            'data'    => $order->fresh(['items', 'user:id,username,email']),
         ]);
     }
 
