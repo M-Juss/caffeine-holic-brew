@@ -43,6 +43,15 @@ class RegisterUserRequest extends FormRequest
                     ->numbers()   
                     ->symbols(),
             ],
+            'address' => [
+                'required',
+                'string'
+            ],
+            'phone_number' => [
+                'required',
+                'string',
+                'regex:/^\+?[0-9]{7,15}$/'
+            ],
             'role' => [
                 'required',
             ]

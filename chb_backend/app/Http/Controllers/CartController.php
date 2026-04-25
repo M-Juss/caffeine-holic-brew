@@ -43,7 +43,6 @@ class CartController extends Controller
         ]);
 
         $user = $request->user();
-
         $menu = Menu::findOrFail($request->menu_id);
 
         if (!$menu->is_available) {
@@ -69,8 +68,6 @@ class CartController extends Controller
                 ['user_id' => $user->id],
                 ['total_amount' => 0, 'total_items' => 0]
             );
-
-            $itemTotal = $menuSize->price * $request->quantity;
 
             $existingItem = CartItem::where('cart_id', $cart->id)
                 ->where('menu_id', $menu->id)
@@ -170,6 +167,14 @@ class CartController extends Controller
         $request->validate([
             'customer_remarks' => ['nullable', 'string', 'max:500'],
             'discount_amount'  => ['nullable', 'numeric', 'min:0'],
+            'delivery_method'  => ['required', 'string', 'in:pick_up,delivery'],
+            'payment'          => ['required', 'numeric', 'min:0'],
+            'assigned_rider'   => [
+                'required_if:delivery_method,delivery',
+                'nullable',
+                'integer',
+                'exists:users,id',
+            ],
         ]);
 
         $user = $request->user();
@@ -180,19 +185,33 @@ class CartController extends Controller
             return response()->json(['message' => 'Your cart is empty.'], 422);
         }
 
+        $discountAmount  = $request->discount_amount ?? 0;
+        $deliveryMethod  = $request->delivery_method;
+        $deliveryFee     = $deliveryMethod === 'delivery' ? 50 : 0;
+        $totalAmount     = ($cart->total_amount - $discountAmount) + $deliveryFee;
+
+        if ((float) $request->payment !== (float) $totalAmount) {
+            return response()->json([
+                'message' => 'Payment amount must equal the total amount due.',
+                'total_amount_due' => $totalAmount,
+            ], 422);
+        }
+
         DB::beginTransaction();
 
         try {
-            $discountAmount = $request->discount_amount ?? 0;
-
             $order = Order::create([
-                'user_id'           => $user->id,
-                'order_number'      => 'ORD-' . strtoupper(Str::random(10)),
-                'total_amount'      => $cart->total_amount - $discountAmount,
-                'discount_amount'   => $discountAmount,
-                'total_items'       => $cart->total_items,
-                'customer_remarks'  => $request->customer_remarks,
-                'status'            => 'pending',
+                'user_id'          => $user->id,
+                'order_number'     => 'ORD-' . strtoupper(Str::random(10)),
+                'total_amount'     => $totalAmount,
+                'discount_amount'  => $discountAmount,
+                'total_items'      => $cart->total_items,
+                'customer_remarks' => $request->customer_remarks,
+                'status'           => 'pending',
+                'delivery_method'  => $deliveryMethod,
+                'delivery_fee'     => $deliveryFee,
+                'payment'          => $request->payment,
+                'assigned_rider'   => $deliveryMethod === 'delivery' ? $request->assigned_rider : null,
             ]);
 
             $orderItems = $cart->items->map(fn(CartItem $item) => [
@@ -227,7 +246,7 @@ class CartController extends Controller
 
     private function recalculateCart(Cart $cart): void
     {
-        $cart->refresh(); 
+        $cart->refresh();
         $cart->load('items');
 
         $cart->total_amount = $cart->items->sum(fn($i) => $i->price * $i->quantity);
@@ -238,7 +257,6 @@ class CartController extends Controller
     private function authorizeCartItem(Request $request, CartItem $cartItem): void
     {
         $cart = Cart::where('user_id', $request->user()->id)->firstOrFail();
-
         abort_if($cartItem->cart_id !== $cart->id, 403, 'Unauthorized action.');
     }
 }

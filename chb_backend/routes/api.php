@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RiderController;
 use App\Models\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,9 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/toggle', [FavoriteController::class, 'toggle']);
         Route::get('/check/{menu}', [FavoriteController::class, 'check']);
     });
+
+
+    Route::get('/riders', [RiderController::class, 'index']);
 
 });
 

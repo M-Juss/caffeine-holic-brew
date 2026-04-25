@@ -32,5 +32,5 @@ class TestimonialController extends Model
 
         return response()->json(['message' => 'Testimonial deleted']);
     
-   }
+   } 
 }

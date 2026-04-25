@@ -23,7 +23,12 @@ class Order extends Model
         'status',
         'reviewed_by',
         'reviewed_at',
-        'reviewer_remarks'
+        'reviewer_remarks',
+
+        'delivery_method',
+        'delivery_fee',
+        'payment',
+        'assigned_rider'
     ];
 
     public function user(): BelongsTo
@@ -34,6 +39,11 @@ class Order extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function assigned_rider(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_rider');
     }
 
     public function items(): HasMany
