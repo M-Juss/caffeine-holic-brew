@@ -6,6 +6,7 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RiderController;
+use App\Http\Controllers\UserController;
 use App\Models\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::patch('/profile/password', [AuthController::class, 'changePassword']);
+
+    Route::apiResource('users', UserController::class);
+    Route::patch('users/{user}/status', [UserController::class, 'changeStatus']);
 
     Route::post('/testimonial', [TestimonialController::class, 'store']);
     Route::delete('/testimonial/{testimonial}', [TestimonialController::class, 'removeTestimonial']);
