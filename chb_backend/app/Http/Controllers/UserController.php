@@ -43,7 +43,7 @@ class UserController extends Controller
             'password'     => ['required', 'confirmed', Password::min(8)],
             'address'      => ['nullable', 'string', 'max:500'],
             'phone_number' => ['nullable', 'string', 'max:20'],
-            'role'         => ['nullable', 'string', 'in:admin,user,moderator'],
+            'role'         => ['nullable', 'string', 'in:admin,rider,manager'],
             'status'       => ['nullable', 'string', 'in:active,inactive,banned'],
         ]);
 
@@ -70,7 +70,7 @@ class UserController extends Controller
             'password'     => ['sometimes', 'required', 'confirmed', Password::min(8)],
             'address'      => ['nullable', 'string', 'max:500'],
             'phone_number' => ['nullable', 'string', 'max:20'],
-            'role'         => ['nullable', 'string', 'in:admin,user,moderator'],
+            'role'         => ['nullable', 'string', 'in:admin,rider,manager'],
             'status'       => ['nullable', 'string', 'in:active,inactive,banned'],
         ]);
 
