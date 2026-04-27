@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
-import { DollarSign, ShoppingBag, TrendingUp } from "lucide-react";
-import { getDashboardStats } from "@/services/dashboard.api";
-import { getOrders, type OrderData } from "@/services/order.api";
+import {  PhilippinePeso, ShoppingBag, TrendingUp } from "lucide-react";
+import { getDashboardData } from "@/services/dashboard.api";
 import { toast } from "sonner";
-
-interface DashboardStats {
-  total_sales: number;
-  total_orders: number;
-  popular_item: string;
-}
 
 interface RecentOrder {
   order: string;
@@ -21,8 +14,8 @@ export default function Dashboard() {
   const [stats, setStats] = useState([
     {
       label: "Total Sales",
-      value: "$0.00",
-      icon: DollarSign,
+      value: "₱ 0.00",
+      icon: PhilippinePeso,
       color: "bg-[#D4A156]",
     },
     {
@@ -44,17 +37,14 @@ export default function Dashboard() {
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
-        const [statsResponse, ordersResponse] = await Promise.all([
-          getDashboardStats(),
-          getOrders(undefined, 1),
-        ]);
+        const response = await getDashboardData();
+        const data = response.data;
 
-        const data = statsResponse.data as DashboardStats;
         setStats([
           {
             label: "Total Sales",
             value: `₱${data.total_sales.toFixed(2)}`,
-            icon: DollarSign,
+            icon: PhilippinePeso,
             color: "bg-[#D4A156]",
           },
           {
@@ -65,14 +55,14 @@ export default function Dashboard() {
           },
           {
             label: "Popular Item",
-            value: data.popular_item,
+            value: data.most_popular_item?.name || "N/A",
             icon: TrendingUp,
             color: "bg-[#A8A8A8]",
           },
         ]);
 
         setRecentOrders(
-          ordersResponse.data.data.slice(0, 5).map((order: OrderData) => ({
+          data.recent_orders.map((order) => ({
             order: order.order_number,
             customer: order.user?.username || "Unknown",
             total: order.total_amount,

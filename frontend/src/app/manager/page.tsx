@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ElementType } from "react";
-import { Coffee, Heart, LogOut, ShoppingBag, ShipWheel, User } from "lucide-react";
+import { Coffee, Heart, LogOut, ShoppingBag, Motorbike, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import MenuManagement from "@/layouts/admin/Menu";
 import OrdersManagement from "@/layouts/admin/Order";
@@ -29,7 +29,7 @@ export default function CustomerPage() {
     { key: "dashboard", icon: Heart, label: "Dashboard" },
     { key: "menu", icon: Coffee, label: "Menu Management" },
     { key: "orders", icon: ShoppingBag, label: "Order Management" },
-    { key: "rider", icon: ShipWheel, label: "Add Rider" },
+    { key: "rider", icon: Motorbike, label: "Add Rider" },
     { key: "admin", icon: User, label: "Add Admin" },
   ];
 

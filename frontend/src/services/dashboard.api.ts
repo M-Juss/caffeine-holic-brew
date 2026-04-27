@@ -1,14 +1,16 @@
 import { authFetch } from "@/lib/api";
+import type { OrderData } from "./order.api";
 
-export async function getDashboardStats() {
+export async function getDashboardData() {
   return authFetch<{
     message: string;
     data: {
       total_sales: number;
       total_orders: number;
-      popular_item: string;
+      most_popular_item: { name: string; total_ordered: number } | null;
+      recent_orders: OrderData[];
     };
-  }>(`${process.env.NEXT_PUBLIC_API_URL}/orders/dashboard-stats`, {
+  }>(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`, {
     method: "GET",
   });
 }

@@ -258,7 +258,7 @@ export default function OrdersManagement() {
                           {formatDate(order.created_at)}
                         </td>
                         <td className="py-4 px-6 text-[#D4A156]">
-                          ${Number(order.total_amount).toFixed(2)}
+                          ₱ {Number(order.total_amount).toFixed(2)}
                         </td>
                         <td className="py-4 px-6">
                           <OrderBadge status={statusLabelMap[order.status]} />
@@ -352,6 +352,14 @@ export default function OrdersManagement() {
                 </p>
               </div>
             )}
+            {selectedOrder.payment && (
+              <div>
+                <p className="text-sm text-[#A8A8A8]">Customer Payment</p>
+                <p className="text-[#5C5C5C] capitalize">
+                  {selectedOrder.payment}
+                </p>
+              </div>
+            )}
             {selectedOrder.user?.address && (
               <div className="md:col-span-2">
                 <p className="text-sm text-[#A8A8A8]">Customer Address</p>
@@ -428,7 +436,7 @@ export default function OrdersManagement() {
                     </p>
                   </div>
                   <p className="text-[#D4A156]">
-                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                    ₱{(Number(item.price) * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -437,7 +445,7 @@ export default function OrdersManagement() {
             <div className="border-t border-[#E0E0E0] mt-4 pt-4 flex justify-between">
               <span className="text-lg text-[#5C5C5C]">Total</span>
               <span className="text-xl text-[#D4A156]">
-                ${Number(selectedOrder.total_amount).toFixed(2)}
+                ₱{Number(selectedOrder.total_amount).toFixed(2)}
               </span>
             </div>
           </div>

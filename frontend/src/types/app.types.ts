@@ -140,6 +140,7 @@ export type OrderData = {
   user?: OrderUser;
   delivery_method?: "pick_up" | "delivery";
   delivery_fee?: number;
+  payment?: string;
   assigned_rider?: {
     id: number;
     username: string;
