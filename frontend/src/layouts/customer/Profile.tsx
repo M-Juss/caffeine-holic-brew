@@ -3,7 +3,6 @@ import {
   CalendarClock,
   PhilippinePeso,
   LockKeyhole,
-  Mail,
   ShoppingBag,
   User,
 } from "lucide-react";
@@ -42,6 +41,7 @@ export default function Profile() {
     username: "",
     phone_number: "",
     address: "",
+    email: "",
   });
 
   useEffect(() => {
@@ -63,6 +63,7 @@ export default function Profile() {
           username: response.data.user.username ?? "",
           phone_number: response.data.user.phone_number ?? "",
           address: response.data.user.address ?? "",
+          email: response.data.user.email
         });
       } catch (err) {
         if (isCancelled) return;
@@ -91,6 +92,7 @@ export default function Profile() {
       username: profile.user.username ?? "",
       phone_number: profile.user.phone_number ?? "",
       address: profile.user.address ?? "",
+      email: profile.user.email ?? ""
     });
     setIsEditingProfile(true);
   };
@@ -102,6 +104,7 @@ export default function Profile() {
       username: profile.user.username ?? "",
       phone_number: profile.user.phone_number ?? "",
       address: profile.user.address ?? "",
+      email: profile.user.email ?? ""
     });
     setIsEditingProfile(false);
   };
@@ -112,6 +115,7 @@ export default function Profile() {
     const username = profileForm.username.trim();
     const phoneNumber = profileForm.phone_number.trim();
     const address = profileForm.address.trim();
+    const email = profileForm.email.trim();
 
     if (!username || !phoneNumber || !address) {
       toast.error("Username, phone number, and address are required.");
@@ -125,6 +129,7 @@ export default function Profile() {
         username,
         phone_number: phoneNumber,
         address,
+        email
       });
 
       setProfile((previousProfile) => {
@@ -137,6 +142,7 @@ export default function Profile() {
             username,
             phone_number: phoneNumber,
             address,
+            email
           },
         };
       });
@@ -271,19 +277,36 @@ export default function Profile() {
                   />
                 </div>
 
-                <div>
-                  <p className="text-sm text-[#A8A8A8] mb-1">Phone Number</p>
-                  <Input
-                    value={profileForm.phone_number}
-                    onChange={(event) =>
-                      setProfileForm((previous) => ({
-                        ...previous,
-                        phone_number: event.target.value,
-                      }))
-                    }
-                    placeholder="Enter phone number"
-                    disabled={!isEditingProfile || isSavingProfile}
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-[#A8A8A8] mb-1">Phone Number</p>
+                    <Input
+                      value={profileForm.phone_number}
+                      onChange={(event) =>
+                        setProfileForm((previous) => ({
+                          ...previous,
+                          phone_number: event.target.value,
+                        }))
+                      }
+                      placeholder="Enter phone number"
+                      disabled={!isEditingProfile || isSavingProfile}
+                    />
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-[#A8A8A8] mb-1">Email</p>
+                    <Input
+                      value={profileForm.email}
+                      onChange={(event) =>
+                        setProfileForm((previous) => ({
+                          ...previous,
+                          email: event.target.value,
+                        }))
+                      }
+                      placeholder="Enter email"
+                      disabled={!isEditingProfile || isSavingProfile}
+                    />
+                  </div>
                 </div>
 
                 <div>

@@ -39,6 +39,11 @@ class UpdateProfileRequest extends FormRequest
                 'string',
                 'regex:/^\+?[0-9]{7,15}$/',
             ],
+            'email' => [
+                'required', 
+                'email', 
+                'unique:users,email'
+            ]
         ];
     }
 }
