@@ -39,7 +39,15 @@ export function RegisterForm() {
     }
 
     try {
-      await createNewCustomer(values.username, values.email, values.password, values.password_confirmation, 'customer');
+      await createNewCustomer(
+        values.username,
+        values.email,
+        values.address,
+        values.contact_number,
+        values.password,
+        values.password_confirmation,
+        "customer",
+      );
 
       toast.success("Account created successfully.");
       router.push("/login");
@@ -66,7 +74,7 @@ export function RegisterForm() {
           id="username"
           type="text"
           label="Userame"
-          placeholder="Enter your full name"
+          placeholder="Enter your username"
           className="h-10 border-gray-300 focus-visible:ring-accent/40"
           {...register("username")}
         />
@@ -82,6 +90,32 @@ export function RegisterForm() {
           placeholder="Enter your email"
           className="h-10 border-gray-300 focus-visible:ring-accent/40"
           {...register("email")}
+        />
+        {errors.email && (
+          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <InputWithLabel
+          id="address"
+          type="text"
+          label="Address"
+          placeholder="Enter your complete address"
+          className="h-10 border-gray-300 focus-visible:ring-accent/40"
+          {...register("address")}
+        />
+        {errors.email && (
+          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <InputWithLabel
+          id="contact_number"
+          type="text"
+          label="Contact Number"
+          placeholder="Enter your contact number"
+          className="h-10 border-gray-300 focus-visible:ring-accent/40"
+          {...register("contact_number")}
         />
         {errors.email && (
           <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>

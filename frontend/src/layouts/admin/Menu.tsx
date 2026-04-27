@@ -392,7 +392,7 @@ export default function MenuManagement() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl text-[#5C5C5C]">Menu Management</h1>
         <Button
-          className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+          className="bg-[#D4A156] p-5 hover:bg-[#C59145] text-white"
           onClick={openAddForm}
           disabled={isSaving}
         >

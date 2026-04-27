@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::patch('/profile', [AuthController::class, 'updateProfile']);
     Route::patch('/profile/password', [AuthController::class, 'changePassword']);
 
     Route::apiResource('users', UserController::class);

@@ -13,6 +13,7 @@ import {
   changePassword,
   getProfile,
   type ProfileResponse,
+  updateProfile,
 } from "@/services/profile.api";
 import { toast } from "sonner";
 
@@ -35,6 +36,14 @@ export default function Profile() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    username: "",
+    phone_number: "",
+    address: "",
+  });
+
   useEffect(() => {
     let isCancelled = false;
 
@@ -48,7 +57,13 @@ export default function Profile() {
       try {
         const response = await getProfile();
         if (isCancelled) return;
+
         setProfile(response.data);
+        setProfileForm({
+          username: response.data.user.username ?? "",
+          phone_number: response.data.user.phone_number ?? "",
+          address: response.data.user.address ?? "",
+        });
       } catch (err) {
         if (isCancelled) return;
         const message =
@@ -68,6 +83,74 @@ export default function Profile() {
       isCancelled = true;
     };
   }, [refreshKey]);
+
+  const handleEditProfile = () => {
+    if (!profile) return;
+
+    setProfileForm({
+      username: profile.user.username ?? "",
+      phone_number: profile.user.phone_number ?? "",
+      address: profile.user.address ?? "",
+    });
+    setIsEditingProfile(true);
+  };
+
+  const handleCancelProfileEdit = () => {
+    if (!profile) return;
+
+    setProfileForm({
+      username: profile.user.username ?? "",
+      phone_number: profile.user.phone_number ?? "",
+      address: profile.user.address ?? "",
+    });
+    setIsEditingProfile(false);
+  };
+
+  const handleSaveProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const username = profileForm.username.trim();
+    const phoneNumber = profileForm.phone_number.trim();
+    const address = profileForm.address.trim();
+
+    if (!username || !phoneNumber || !address) {
+      toast.error("Username, phone number, and address are required.");
+      return;
+    }
+
+    setIsSavingProfile(true);
+
+    try {
+      const response = await updateProfile({
+        username,
+        phone_number: phoneNumber,
+        address,
+      });
+
+      setProfile((previousProfile) => {
+        if (!previousProfile) return previousProfile;
+
+        return {
+          ...previousProfile,
+          user: {
+            ...previousProfile.user,
+            username,
+            phone_number: phoneNumber,
+            address,
+          },
+        };
+      });
+
+      toast.success(response.message);
+      setIsEditingProfile(false);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to update profile.";
+      toast.error(message);
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const handleChangePassword = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -133,65 +216,119 @@ export default function Profile() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl p-8 shadow-md w-full">
-            <div className="flex items-center gap-6 mb-8">
-              <div className="w-24 h-24 bg-[#D4A156] rounded-full flex items-center justify-center">
-                <User className="w-12 h-12 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-6 bg-white rounded-2xl shadow-md">
+              <div className="flex items-center gap-2 mb-2">
+                <PhilippinePeso className="w-5 h-5 text-[#D4A156]" />
+                <p className="text-md text-[#A8A8A8]">Total Spent</p>
               </div>
-              <div>
-                <h2 className="text-2xl text-[#5C5C5C] mb-1">
-                  {profile.user.username}
-                </h2>
-              </div>
+              <p className="text-[#5C5C5C] text-2xl font-medium">
+                ₱ {Number(profile.stats.total_spent).toFixed(2)}
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-[#F5F5F5] rounded-xl">
-                <Mail className="w-5 h-5 text-[#D4A156]" />
-                <div>
-                  <p className="text-sm text-[#A8A8A8]">Email</p>
-                  <p className="text-[#5C5C5C]">{profile.user.email}</p>
-                </div>
+            <div className="p-6 bg-white rounded-2xl shadow-md">
+              <div className="flex items-center gap-2 mb-2">
+                <ShoppingBag className="w-5 h-5 text-[#D4A156]" />
+                <p className="text-md text-[#A8A8A8]">Total Orders</p>
               </div>
+              <p className="text-[#5C5C5C] text-2xl font-medium">
+                {profile.stats.total_orders}
+              </p>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div className="p-6 bg-white rounded-2xl shadow-md">
+              <div className="flex items-center gap-2 mb-2">
+                <CalendarClock className="w-5 h-5 text-[#D4A156]" />
+                <p className="text-md text-[#A8A8A8]">Member Since</p>
+              </div>
+              <p className="text-[#5C5C5C] text-2xl font-medium">
+                {formatDate(profile.stats.member_since)}
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-7">
-            <div className="bg-white rounded-2xl p-8 shadow-md w-full space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+            <div className="bg-white rounded-2xl p-8 shadow-md w-full">
               <div className="flex items-center gap-3 mb-5">
-                <ShoppingBag className="w-5 h-5 text-[#D4A156]" />
+                <User className="w-5 h-5 text-[#D4A156]" />
                 <h3 className="text-xl text-[#5C5C5C]">Account Information</h3>
               </div>
-              <div className="p-4 bg-[#F5F5F5] rounded-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <CalendarClock className="w-5 h-5 text-[#D4A156]" />
-                  <p className="text-sm text-[#A8A8A8]">Member Since</p>
-                </div>
-                <p className="text-[#5C5C5C] font-medium">
-                  {formatDate(profile.stats.member_since)}
-                </p>
-              </div>
-              <div className="p-4 bg-[#F5F5F5] rounded-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <PhilippinePeso className="w-5 h-5 text-[#D4A156]" />
-                  <p className="text-sm text-[#A8A8A8]">Total Spent</p>
-                </div>
-                <p className="text-[#5C5C5C] font-medium">
-                  ₱ {Number(profile.stats.total_spent).toFixed(2)}
-                </p>
-              </div>
 
-              <div className="p-4 bg-[#F5F5F5] rounded-xl">
-                <div className="flex items-center gap-2 mb-2">
-                  <ShoppingBag className="w-5 h-5 text-[#D4A156]" />
-                  <p className="text-sm text-[#A8A8A8]">Total Orders</p>
+              <form onSubmit={handleSaveProfile} className="space-y-4 max-w-xl">
+                <div>
+                  <p className="text-sm text-[#A8A8A8] mb-1">Username</p>
+                  <Input
+                    value={profileForm.username}
+                    onChange={(event) =>
+                      setProfileForm((previous) => ({
+                        ...previous,
+                        username: event.target.value,
+                      }))
+                    }
+                    placeholder="Enter username"
+                    disabled={!isEditingProfile || isSavingProfile}
+                  />
                 </div>
-                <p className="text-[#5C5C5C] font-medium">
-                  {profile.stats.total_orders}
-                </p>
-              </div>
+
+                <div>
+                  <p className="text-sm text-[#A8A8A8] mb-1">Phone Number</p>
+                  <Input
+                    value={profileForm.phone_number}
+                    onChange={(event) =>
+                      setProfileForm((previous) => ({
+                        ...previous,
+                        phone_number: event.target.value,
+                      }))
+                    }
+                    placeholder="Enter phone number"
+                    disabled={!isEditingProfile || isSavingProfile}
+                  />
+                </div>
+
+                <div>
+                  <p className="text-sm text-[#A8A8A8] mb-1">Address</p>
+                  <Input
+                    value={profileForm.address}
+                    onChange={(event) =>
+                      setProfileForm((previous) => ({
+                        ...previous,
+                        address: event.target.value,
+                      }))
+                    }
+                    placeholder="Enter address"
+                    disabled={!isEditingProfile || isSavingProfile}
+                  />
+                </div>
+
+                {!isEditingProfile ? (
+                  <Button
+                    type="button"
+                    onClick={handleEditProfile}
+                    className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+                  >
+                    Edit
+                  </Button>
+                ) : (
+                  <div className="flex gap-3">
+                    <Button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+                    >
+                      {isSavingProfile ? "Saving..." : "Save Changes"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isSavingProfile}
+                      onClick={handleCancelProfileEdit}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </form>
             </div>
 
             <div className="bg-white rounded-2xl p-8 shadow-md w-full">

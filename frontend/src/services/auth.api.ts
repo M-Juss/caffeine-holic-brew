@@ -31,6 +31,8 @@ export async function loginUser(
 export async function createNewCustomer(
   username: string,
   email: string,
+  address: string,
+  phone_number: string,
   password: string,
   password_confirmation: string,
   role: string
@@ -41,7 +43,7 @@ export async function createNewCustomer(
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ username, email, password, password_confirmation, role})
+    body: JSON.stringify({ username, email, address, phone_number, password, password_confirmation, role})
   });
 
   const data = await response.json();
