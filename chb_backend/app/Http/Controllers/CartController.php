@@ -169,12 +169,6 @@ class CartController extends Controller
             'discount_amount'  => ['nullable', 'numeric', 'min:0'],
             'delivery_method'  => ['required', 'string', 'in:pick_up,delivery'],
             'payment'          => ['required', 'numeric', 'min:0'],
-            'assigned_rider'   => [
-                'required_if:delivery_method,delivery',
-                'nullable',
-                'integer',
-                'exists:users,id',
-            ],
         ]);
 
         $user = $request->user();
@@ -211,7 +205,7 @@ class CartController extends Controller
                 'delivery_method'  => $deliveryMethod,
                 'delivery_fee'     => $deliveryFee,
                 'payment'          => $request->payment,
-                'assigned_rider'   => $deliveryMethod === 'delivery' ? $request->assigned_rider : null,
+                'assigned_rider'   => null,
             ]);
 
             $orderItems = $cart->items->map(fn(CartItem $item) => [

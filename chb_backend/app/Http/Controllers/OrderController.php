@@ -132,4 +132,27 @@ class OrderController extends Controller
     {
         return in_array($to, $this->allowedTransitions($from));
     }
+
+    // admin
+    public function assignRider(Request $request, Order $order): JsonResponse
+    {
+        $request->validate([
+            'assigned_rider' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        if ($order->delivery_method !== 'delivery') {
+            return response()->json([
+                'message' => 'Cannot assign a rider to a pick-up order.',
+            ], 422);
+        }
+
+        $order->update([
+            'assigned_rider' => $request->assigned_rider,
+        ]);
+
+        return response()->json([
+            'message' => 'Rider assigned successfully.',
+            'data'    => $order->fresh($this->relations),
+        ]);
+    }
 }

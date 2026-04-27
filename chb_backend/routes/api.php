@@ -43,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function(){
         //admin
         Route::get('/',                           [OrderController::class, 'index']);
         Route::patch('/{order}/status',          [OrderController::class, 'updateStatus']);
+
+        Route::patch('/{order}/assign-rider', [OrderController::class, 'assignRider']);
     });
 
     Route::prefix('favorites')->group(function () {
@@ -53,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
 
     Route::get('/riders', [RiderController::class, 'index']);
+    
 
 });
 
