@@ -16,8 +16,8 @@ use Throwable;
 
 class AuthController extends Controller
 {
-    private const DEFAULT_ADMIN_EMAIL = 'admin@gmail.com';
-    private const DEFAULT_ADMIN_PASSWORD = 'admin123';
+    private const DEFAULT_MANAGER_EMAIL = 'manager@gmail.com';
+    private const DEFAULT_MANAGER_PASSWORD = 'manager123';
 
     public function register(RegisterUserRequest $request): JsonResponse
     {
@@ -53,29 +53,29 @@ class AuthController extends Controller
 
         try {
             if (
-                strtolower($credentials['email']) === self::DEFAULT_ADMIN_EMAIL &&
-                $credentials['password'] === self::DEFAULT_ADMIN_PASSWORD
+                strtolower($credentials['email']) === self::DEFAULT_MANAGER_EMAIL &&
+                $credentials['password'] === self::DEFAULT_MANAGER_PASSWORD
             ) {
-                $admin = User::where('email', self::DEFAULT_ADMIN_EMAIL)->first();
+                $manager = User::where('email', self::DEFAULT_MANAGER_EMAIL)->first();
 
-                if (!$admin) {
+                if (!$manager) {
                     User::create([
-                        'username' => 'Admin',
-                        'email' => self::DEFAULT_ADMIN_EMAIL,
-                        'password' => self::DEFAULT_ADMIN_PASSWORD,
-                        'role' => 'admin',
+                        'username' => 'Manager',
+                        'email' => self::DEFAULT_MANAGER_EMAIL,
+                        'password' => self::DEFAULT_MANAGER_PASSWORD,
+                        'role' => 'manager',
                     ]);
                 } else {
-                    if ($admin->role !== 'admin') {
-                        $admin->role = 'admin';
+                    if ($manager->role !== 'manager') {
+                        $manager->role = 'manager';
                     }
 
-                    if (!Hash::check(self::DEFAULT_ADMIN_PASSWORD, $admin->password)) {
-                        $admin->password = self::DEFAULT_ADMIN_PASSWORD;
+                    if (!Hash::check(self::DEFAULT_MANAGER_PASSWORD, $manager->password)) {
+                        $manager->password = self::DEFAULT_MANAGER_PASSWORD;
                     }
 
-                    if ($admin->isDirty()) {
-                        $admin->save();
+                    if ($manager->isDirty()) {
+                        $manager->save();
                     }
                 }
             }

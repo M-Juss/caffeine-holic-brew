@@ -29,7 +29,11 @@ export function LoginForm() {
       const response = await loginUser(values.email, values.password);
       toast.success("Login successful.");
       const role = (response?.data?.role ?? "").toLowerCase();
-      router.push(role === "admin" ? "/admin" : "/customer");
+      if(role == "manager"){
+        router.push("/manager")
+      }else if (role == "admin") {
+        router.push("/admin")
+      }
     } catch (error) {
       const err = error as Error & {
         errors?: Record<string, string[] | string>;

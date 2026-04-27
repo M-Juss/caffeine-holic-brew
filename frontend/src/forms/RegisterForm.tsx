@@ -73,8 +73,8 @@ export function RegisterForm() {
         <InputWithLabel
           id="username"
           type="text"
-          label="Userame"
-          placeholder="Enter your username"
+          label="Fullname"
+          placeholder="Enter your fullname"
           className="h-10 border-gray-300 focus-visible:ring-accent/40"
           {...register("username")}
         />

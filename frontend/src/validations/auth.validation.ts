@@ -14,7 +14,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const createAccountSchema = z
   .object({
-    username: z.string().trim().nonempty("Username is Required"),
+    username: z.string().trim().nonempty("Fullname is Required"),
 
     email: z
       .string()
