@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type ElementType } from "react";
+import { useState, useEffect, type ElementType } from "react";
 import { Coffee, Heart, LogOut, ShoppingBag, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Menu from "@/layouts/customer/Menu";
 import Favorites from "@/layouts/customer/Favorites";
 import MyOrders from "@/layouts/customer/MyOrder";
@@ -13,7 +13,21 @@ type TabKey = "menu" | "orders" | "favorites" | "profile";
 
 export default function CustomerPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as TabKey | null;
   const [activeTab, setActiveTab] = useState<TabKey>("menu");
+
+  useEffect(() => {
+    if (
+      tabParam &&
+      (tabParam === "menu" ||
+        tabParam === "orders" ||
+        tabParam === "favorites" ||
+        tabParam === "profile")
+    ) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");

@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-type MenuCategory = "Coffee" | "Non Coffee" | "Pastries" | "Snacks";
+import type { MenuCategory } from "@/types/app.types";
 
 export interface MenuAdminCardSize {
   id: number;
@@ -69,7 +68,10 @@ export default function MenuAdminCard({
   onDelete,
   onToggleAvailability,
 }: MenuAdminCardProps) {
-  const imageCandidates = useMemo(() => buildImageCandidates(item.image), [item.image]);
+  const imageCandidates = useMemo(
+    () => buildImageCandidates(item.image),
+    [item.image],
+  );
   const imageSrc = imageCandidates[0] ?? item.image;
 
   return (
@@ -96,7 +98,9 @@ export default function MenuAdminCard({
           <div className="flex items-start justify-between mb-4">
             <div>
               <h3 className="text-xl text-[#5C5C5C] mb-1">{item.name}</h3>
-              <p className="text-xs text-[#D4A156] font-medium mb-1">{item.category}</p>
+              <p className="text-xs text-[#D4A156] font-medium mb-1">
+                {item.category}
+              </p>
               <p className="text-[#A8A8A8] text-sm">{item.description}</p>
             </div>
             <div className="flex gap-2">

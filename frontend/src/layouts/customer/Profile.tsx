@@ -63,7 +63,7 @@ export default function Profile() {
           username: response.data.user.username ?? "",
           phone_number: response.data.user.phone_number ?? "",
           address: response.data.user.address ?? "",
-          email: response.data.user.email
+          email: response.data.user.email,
         });
       } catch (err) {
         if (isCancelled) return;
@@ -92,7 +92,7 @@ export default function Profile() {
       username: profile.user.username ?? "",
       phone_number: profile.user.phone_number ?? "",
       address: profile.user.address ?? "",
-      email: profile.user.email ?? ""
+      email: profile.user.email ?? "",
     });
     setIsEditingProfile(true);
   };
@@ -104,7 +104,7 @@ export default function Profile() {
       username: profile.user.username ?? "",
       phone_number: profile.user.phone_number ?? "",
       address: profile.user.address ?? "",
-      email: profile.user.email ?? ""
+      email: profile.user.email ?? "",
     });
     setIsEditingProfile(false);
   };
@@ -129,7 +129,7 @@ export default function Profile() {
         username,
         phone_number: phoneNumber,
         address,
-        email
+        email,
       });
 
       setProfile((previousProfile) => {
@@ -142,7 +142,7 @@ export default function Profile() {
             username,
             phone_number: phoneNumber,
             address,
-            email
+            email,
           },
         };
       });

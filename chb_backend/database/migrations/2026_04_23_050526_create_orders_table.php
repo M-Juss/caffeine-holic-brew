@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('reviewed_at')->nullable();
-            $table->text('reviwer_remarks')->nullable();
+            $table->text('reviewer_remarks')->nullable();
             $table->timestamps();
         });
     }

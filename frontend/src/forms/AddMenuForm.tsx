@@ -1,76 +1,120 @@
-import { type ChangeEvent, type FormEvent, useRef } from "react";
-import { Upload } from "lucide-react";
+"use client";
+
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { InputWithLabel } from "@/components/common/InputWithLabel";
 import { SelectWithLabel } from "@/components/common/SelectWithLabel";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { addMenuSchema } from "@/validations/menu.validation";
+import { createMenu } from "@/services/menu.api";
 import { toast } from "sonner";
-
-type MenuCategory = "Coffee" | "Non Coffee" | "Pastries" | "Snacks";
-
-type FormSize = {
-  id: string;
-  name: string;
-  price: string;
-};
-
-type MenuFormState = {
-  name: string;
-  description: string;
-  image: string;
-  category: MenuCategory;
-  availability: "available" | "unavailable";
-  sizes: FormSize[];
-};
+import { Upload } from "lucide-react";
+import type { MenuCategory } from "@/types/app.types";
 
 type AddMenuFormProps = {
-  form: MenuFormState;
-  categoryOptions: { value: string; label: string }[];
-  availabilityOptions: { value: string; label: string }[];
-  onSaveMenu: () => void;
+  onSuccess: () => void;
   onCancel: () => void;
-  onImagePick: (event: ChangeEvent<HTMLInputElement>) => void;
-  onNameChange: (value: string) => void;
-  onCategoryChange: (value: MenuCategory) => void;
-  onAvailabilityChange: (value: "available" | "unavailable") => void;
-  onDescriptionChange: (value: string) => void;
-  onAddSize: () => void;
-  onSizeFieldChange: (
-    sizeId: string,
-    field: "name" | "price",
-    value: string,
-  ) => void;
-  onRemoveSize: (sizeId: string) => void;
 };
 
-export function AddMenuForm({
-  form,
-  categoryOptions,
-  availabilityOptions,
-  onSaveMenu,
-  onCancel,
-  onImagePick,
-  onNameChange,
-  onCategoryChange,
-  onAvailabilityChange,
-  onDescriptionChange,
-  onAddSize,
-  onSizeFieldChange,
-  onRemoveSize,
-}: AddMenuFormProps) {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+const CATEGORY_OPTIONS = [
+  { value: "Coffee", label: "Coffee" },
+  { value: "Non Coffee", label: "Non Coffee" },
+  { value: "Pastries", label: "Pastries" },
+  { value: "Snacks", label: "Snacks" },
+];
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const validation = addMenuSchema.safeParse(form);
-    if (!validation.success) {
-      const firstIssue = validation.error.issues[0];
-      toast.error(firstIssue?.message || "Please check the menu form.");
-      return;
+export function AddMenuForm({ onSuccess, onCancel }: AddMenuFormProps) {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    category: "Coffee" as MenuCategory,
+    is_available: true,
+    sizes: [{ id: "1", name: "", price: "" }],
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImagePick = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleAddSize = () => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: [
+        ...prev.sizes,
+        { id: Date.now().toString(), name: "", price: "" },
+      ],
+    }));
+  };
+
+  const handleRemoveSize = (id: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((size) => size.id !== id),
+    }));
+  };
+
+  const handleSizeChange = (
+    id: string,
+    field: "name" | "price",
+    value: string,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.map((size) =>
+        size.id === id ? { ...size, [field]: value } : size,
+      ),
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      if (!imageFile) {
+        toast.error("Please select an image");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const hasInvalidSize = formData.sizes.some(
+        (size) =>
+          !size.name.trim() || !size.price || parseFloat(size.price) <= 0,
+      );
+
+      if (hasInvalidSize) {
+        toast.error("Each size must have a name and a valid price");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const payload = {
+        image: imageFile,
+        name: formData.name.trim(),
+        description: formData.description.trim(),
+        category: formData.category,
+        is_available: formData.is_available,
+        sizes: formData.sizes.map((size) => ({
+          name: size.name.trim(),
+          price: parseFloat(size.price),
+        })),
+      };
+
+      await createMenu(payload);
+      toast.success("Menu item added successfully");
+      onSuccess();
+    } catch (error) {
+      const err = error as Error;
+      toast.error(err.message || "Failed to add menu item");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onSaveMenu();
   };
 
   return (
@@ -80,7 +124,7 @@ export function AddMenuForm({
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={onImagePick}
+        onChange={handleImagePick}
       />
 
       <button
@@ -88,9 +132,9 @@ export function AddMenuForm({
         onClick={() => fileInputRef.current?.click()}
         className="w-full h-44 rounded-xl border-2 border-dashed border-[#D4A156] bg-[#F9F4EC] hover:bg-[#F3E7D3] transition-colors flex items-center justify-center overflow-hidden"
       >
-        {form.image ? (
+        {imagePreview ? (
           <img
-            src={form.image}
+            src={imagePreview}
             alt="Menu preview"
             className="h-full w-full object-cover"
           />
@@ -106,44 +150,57 @@ export function AddMenuForm({
         <InputWithLabel
           id="menu-name"
           label="Name"
-          placeholder="e.g Iced- Coffee"
-          value={form.name}
-          onChange={(event) => onNameChange(event.target.value)}
+          placeholder="e.g Iced Coffee"
+          value={formData.name}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData({ ...formData, name: e.target.value })
+          }
           required
           containerClassName="md:col-span-2"
-          className="h-10"
         />
 
         <SelectWithLabel
           id="menu-category"
           label="Category"
           placeholder="Select category"
-          options={categoryOptions}
-          value={form.category}
-          onValueChange={(value) => onCategoryChange(value as MenuCategory)}
+          options={CATEGORY_OPTIONS}
+          value={formData.category}
+          onValueChange={(value: string) =>
+            setFormData({ ...formData, category: value as MenuCategory })
+          }
         />
 
         <SelectWithLabel
           id="menu-availability"
           label="Availability"
           placeholder="Select availability"
-          options={availabilityOptions}
-          value={form.availability}
-          onValueChange={(value) =>
-            onAvailabilityChange(value as "available" | "unavailable")
+          options={[
+            { value: "available", label: "Available" },
+            { value: "unavailable", label: "Unavailable" },
+          ]}
+          value={formData.is_available ? "available" : "unavailable"}
+          onValueChange={(value: string) =>
+            setFormData({
+              ...formData,
+              is_available: value === "available",
+            })
           }
         />
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="menu-description">Description</Label>
+      <div>
+        <label htmlFor="menu-description" className="text-sm font-medium">
+          Description
+        </label>
         <textarea
           id="menu-description"
           rows={4}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring mt-2"
           placeholder="Write a short description"
-          value={form.description}
-          onChange={(event) => onDescriptionChange(event.target.value)}
+          value={formData.description}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            setFormData({ ...formData, description: e.target.value })
+          }
           required
         />
       </div>
@@ -151,13 +208,13 @@ export function AddMenuForm({
       <div className="space-y-3">
         <button
           type="button"
-          onClick={onAddSize}
+          onClick={handleAddSize}
           className="text-md text-[#1A1A1A] underline underline-offset-4"
         >
           + Add Sizes / Variants
         </button>
 
-        {form.sizes.map((size) => (
+        {formData.sizes.map((size) => (
           <div key={size.id} className="rounded-xl bg-[#F6F6F6] p-4 space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <InputWithLabel
@@ -165,8 +222,8 @@ export function AddMenuForm({
                 label="Name"
                 placeholder="e.g Small"
                 value={size.name}
-                onChange={(event) =>
-                  onSizeFieldChange(size.id, "name", event.target.value)
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleSizeChange(size.id, "name", e.target.value)
                 }
               />
               <InputWithLabel
@@ -177,8 +234,8 @@ export function AddMenuForm({
                 step="0.01"
                 placeholder="e.g 300"
                 value={size.price}
-                onChange={(event) =>
-                  onSizeFieldChange(size.id, "price", event.target.value)
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleSizeChange(size.id, "price", e.target.value)
                 }
               />
             </div>
@@ -186,7 +243,7 @@ export function AddMenuForm({
               type="button"
               variant="outline"
               className="text-destructive border-destructive"
-              onClick={() => onRemoveSize(size.id)}
+              onClick={() => handleRemoveSize(size.id)}
             >
               Remove Size
             </Button>
@@ -198,8 +255,9 @@ export function AddMenuForm({
         <Button
           type="submit"
           className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+          disabled={isSubmitting}
         >
-          Save Menu
+          {isSubmitting ? "Saving..." : "Save Menu"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel

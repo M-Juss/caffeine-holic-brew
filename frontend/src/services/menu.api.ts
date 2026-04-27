@@ -1,53 +1,23 @@
 import { authFetch } from "@/lib/api";
+import type {
+  MenuCategory,
+  MenuResponse,
+  MenuListResponse,
+  CreateMenuPayload,
+  UpdateMenuPayload,
+} from "@/types/app.types";
 
-export type MenuCategory = "Coffee" | "Non Coffee" | "Pastries" | "Snacks";
-
-export type MenuResponse = {
-  message: string;
-  data: {
-    id: number;
-    image_path: string;
-    name: string;
-    description: string;
-    category: MenuCategory;
-    is_available: boolean;
-    sizes: Array<{
-      size: string;
-      price: number;
-    }>;
-  };
+export {
+  MenuCategory,
+  MenuResponse,
+  MenuListResponse,
+  CreateMenuPayload,
+  UpdateMenuPayload,
 };
 
-export type MenuListResponse = {
-  message: string;
-  data: MenuResponse["data"][];
-};
-
-export type CreateMenuPayload = {
-  image: File;
-  name: string;
-  description: string;
-  category: MenuCategory;
-  is_available: boolean;
-  sizes: Array<{
-    name: string;
-    price: number;
-  }>;
-};
-
-export type UpdateMenuPayload = {
-  image?: File;
-  name?: string;
-  description?: string;
-  category?: MenuCategory;
-  is_available?: boolean;
-  sizes?: Array<{
-    menu: string;
-    price: number;
-  }>;
-};
-
-export async function createMenu(payload: CreateMenuPayload): Promise<MenuResponse> {
+export async function createMenu(
+  payload: CreateMenuPayload,
+): Promise<MenuResponse> {
   const formData = new FormData();
 
   formData.append("image", payload.image);
@@ -68,14 +38,17 @@ export async function createMenu(payload: CreateMenuPayload): Promise<MenuRespon
 }
 
 export async function getMenus(): Promise<MenuListResponse> {
-  return authFetch<MenuListResponse>(`${process.env.NEXT_PUBLIC_API_URL}/menu`, {
-    method: "GET",
-  });
+  return authFetch<MenuListResponse>(
+    `${process.env.NEXT_PUBLIC_API_URL}/menu`,
+    {
+      method: "GET",
+    },
+  );
 }
 
 export async function updateMenu(
   id: number,
-  payload: UpdateMenuPayload
+  payload: UpdateMenuPayload,
 ): Promise<MenuResponse> {
   const formData = new FormData();
   formData.append("_method", "PATCH");
@@ -85,7 +58,8 @@ export async function updateMenu(
   if (payload.description !== undefined) {
     formData.append("description", payload.description);
   }
-  if (payload.category !== undefined) formData.append("category", payload.category);
+  if (payload.category !== undefined)
+    formData.append("category", payload.category);
   if (payload.is_available !== undefined) {
     formData.append("is_available", payload.is_available ? "1" : "0");
   }
@@ -95,10 +69,13 @@ export async function updateMenu(
     formData.append(`sizes[${index}][price]`, String(size.price));
   });
 
-  return authFetch<MenuResponse>(`${process.env.NEXT_PUBLIC_API_URL}/menu/${id}`, {
-    method: "POST",
-    body: formData,
-  });
+  return authFetch<MenuResponse>(
+    `${process.env.NEXT_PUBLIC_API_URL}/menu/${id}`,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
 }
 
 export async function deleteMenu(id: number): Promise<{ message: string }> {
@@ -106,6 +83,6 @@ export async function deleteMenu(id: number): Promise<{ message: string }> {
     `${process.env.NEXT_PUBLIC_API_URL}/menu/${id}`,
     {
       method: "DELETE",
-    }
+    },
   );
 }

@@ -14,7 +14,7 @@ import {
   type CartResponseData,
 } from "@/services/cart.api";
 
-type MenuCategory = "Coffee" | "Non Coffee" | "Pastries" | "Snacks";
+import type { MenuCategory } from "@/types/app.types";
 
 interface MenuSize {
   id: number;
@@ -95,20 +95,19 @@ export default function Menu() {
     () =>
       menuItems.filter(
         (item) =>
-          item.available && item.category === activeCategory && item.sizes.length > 0
+          item.available &&
+          item.category === activeCategory &&
+          item.sizes.length > 0,
       ),
-    [activeCategory, menuItems]
+    [activeCategory, menuItems],
   );
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoadingMenus(true);
-        const [menuResponse, favoriteResponse, cartResponse] = await Promise.all([
-          getMenus(),
-          getFavorites(),
-          getCart(),
-        ]);
+        const [menuResponse, favoriteResponse, cartResponse] =
+          await Promise.all([getMenus(), getFavorites(), getCart()]);
 
         const menus: MenuItem[] = menuResponse.data.map((menu) => ({
           id: menu.id,
@@ -209,7 +208,7 @@ export default function Menu() {
     const wasFavorite = favorites.includes(itemId);
 
     setFavorites((prev) =>
-      wasFavorite ? prev.filter((id) => id !== itemId) : [...prev, itemId]
+      wasFavorite ? prev.filter((id) => id !== itemId) : [...prev, itemId],
     );
 
     try {
@@ -219,15 +218,15 @@ export default function Menu() {
           ? prev.includes(itemId)
             ? prev
             : [...prev, itemId]
-          : prev.filter((id) => id !== itemId)
+          : prev.filter((id) => id !== itemId),
       );
       toast.success(response.message);
     } catch (error) {
       setFavorites((prev) =>
-        wasFavorite ? [...prev, itemId] : prev.filter((id) => id !== itemId)
+        wasFavorite ? [...prev, itemId] : prev.filter((id) => id !== itemId),
       );
       const err = error as Error;
-      toast.error(err.message || "Failed to update favorite.");
+      // toast.error(err.message || "Failed to update favorite.");
     }
   };
 

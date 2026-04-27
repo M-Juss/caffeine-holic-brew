@@ -37,10 +37,12 @@ class UserController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        $isRider = $request->input('role') === 'rider';
+
         $validated = $request->validate([
             'username'     => ['required', 'string', 'max:255', 'unique:users,username'],
             'email'        => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password'     => ['required', 'confirmed', Password::min(8)],
+            'password'     => [$isRider ? 'nullable' : 'required', 'confirmed', Password::min(8)],
             'address'      => ['nullable', 'string', 'max:500'],
             'phone_number' => ['nullable', 'string', 'max:20'],
             'role'         => ['nullable', 'string', 'in:admin,rider,manager'],

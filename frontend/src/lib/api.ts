@@ -1,9 +1,6 @@
+import type { ApiParams, ApiOptions } from "@/types/app.types";
 
-type ApiParams = Record<string, string | number | boolean | null | undefined>;
-
-type ApiOptions = RequestInit & {
-  params?: ApiParams;
-};
+export { ApiParams, ApiOptions };
 
 function attachParams(url: string, params?: ApiParams): string {
   if (!params) return url;
@@ -21,10 +18,10 @@ function attachParams(url: string, params?: ApiParams): string {
 
 export async function authFetch<T = unknown>(
   url: string,
-  options: ApiOptions = {}
+  options: ApiOptions = {},
 ): Promise<T> {
   const { params, headers, body, ...rest } = options;
-  const token = localStorage.getItem("auth_token")
+  const token = localStorage.getItem("auth_token");
 
   const normalizedHeaders = new Headers(headers);
   normalizedHeaders.set("Accept", "application/json");
@@ -34,7 +31,11 @@ export async function authFetch<T = unknown>(
   }
 
   // Let browser set multipart boundary automatically for FormData
-  if (body && !(body instanceof FormData) && !normalizedHeaders.has("Content-Type")) {
+  if (
+    body &&
+    !(body instanceof FormData) &&
+    !normalizedHeaders.has("Content-Type")
+  ) {
     normalizedHeaders.set("Content-Type", "application/json");
   }
 
@@ -53,7 +54,7 @@ export async function authFetch<T = unknown>(
 
   if (!response.ok) {
     const err = new Error(
-      (data as { message?: string }).message || "Request failed"
+      (data as { message?: string }).message || "Request failed",
     ) as Error & { errors?: unknown };
     err.errors = (data as { errors?: unknown }).errors ?? null;
     throw err;

@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function(){
 
         //admin
         Route::get('/',                           [OrderController::class, 'index']);
+        Route::get('/dashboard-stats',            [OrderController::class, 'getDashboardStats']);
         Route::patch('/{order}/status',          [OrderController::class, 'updateStatus']);
 
         Route::patch('/{order}/assign-rider', [OrderController::class, 'assignRider']);

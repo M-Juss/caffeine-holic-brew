@@ -2,11 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import OrderBadge from "@/components/common/OrderBadge";
 import { Button } from "@/components/ui/button";
-import { cancelOrder, getMyOrders, type OrderData, type OrderStatus } from "@/services/order.api";
+import {
+  cancelOrder,
+  getMyOrders,
+  type OrderData,
+  type OrderStatus,
+} from "@/services/order.api";
 import { toast } from "sonner";
 
-type DisplayStatus = "Pending" | "Accepted" | "Preparing" | "Completed" | "Cancelled";
-type StatusFilter = "All" | DisplayStatus;
+import type { DisplayStatus, StatusFilter } from "@/types/app.types";
 
 const statusOptions: StatusFilter[] = [
   "All",
@@ -67,7 +71,8 @@ export default function MyOrders() {
         setLastPage(response.data.last_page);
       } catch (err) {
         if (isCancelled) return;
-        const message = err instanceof Error ? err.message : "Failed to load your orders.";
+        const message =
+          err instanceof Error ? err.message : "Failed to load your orders.";
         setError(message);
         toast.error(message);
       } finally {
@@ -85,12 +90,17 @@ export default function MyOrders() {
   }, [filter, currentPage, refreshKey]);
 
   const selectedOrder = useMemo(
-    () => (selectedOrderId ? orders.find((order) => order.id === selectedOrderId) ?? null : null),
-    [selectedOrderId, orders]
+    () =>
+      selectedOrderId
+        ? (orders.find((order) => order.id === selectedOrderId) ?? null)
+        : null,
+    [selectedOrderId, orders],
   );
 
   const handleCancelOrder = async (orderId: number) => {
-    const confirmed = window.confirm("Cancel this order? This can only be done while it is pending.");
+    const confirmed = window.confirm(
+      "Cancel this order? This can only be done while it is pending.",
+    );
     if (!confirmed) return;
 
     setIsCancelling(true);
@@ -99,10 +109,13 @@ export default function MyOrders() {
       const response = await cancelOrder(orderId);
       const updatedOrder = response.data;
 
-      setOrders((prev) => prev.map((order) => (order.id === orderId ? updatedOrder : order)));
+      setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? updatedOrder : order)),
+      );
       toast.success("Order cancelled successfully");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to cancel order.";
+      const message =
+        err instanceof Error ? err.message : "Failed to cancel order.";
       toast.error(message);
     } finally {
       setIsCancelling(false);
@@ -136,7 +149,9 @@ export default function MyOrders() {
           </div>
 
           {isLoading ? (
-            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">Loading orders...</div>
+            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">
+              Loading orders...
+            </div>
           ) : error ? (
             <div className="bg-white rounded-2xl p-6 shadow-md">
               <p className="text-red-600 mb-4">{error}</p>
@@ -148,7 +163,9 @@ export default function MyOrders() {
               </Button>
             </div>
           ) : orders.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">No orders found.</div>
+            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">
+              No orders found.
+            </div>
           ) : (
             <>
               <div className="space-y-4">
@@ -160,15 +177,21 @@ export default function MyOrders() {
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-4 mb-2 flex-wrap">
-                        <h3 className="text-xl text-[#5C5C5C]">{order.order_number}</h3>
+                        <h3 className="text-xl text-[#5C5C5C]">
+                          {order.order_number}
+                        </h3>
                         <OrderBadge status={statusLabelMap[order.status]} />
                       </div>
-                      <p className="text-sm text-[#A8A8A8]">{formatDate(order.created_at)}</p>
+                      <p className="text-sm text-[#A8A8A8]">
+                        {formatDate(order.created_at)}
+                      </p>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
                         <p className="text-sm text-[#A8A8A8]">Total</p>
-                        <p className="text-xl text-[#D4A156]">${Number(order.total_amount).toFixed(2)}</p>
+                        <p className="text-xl text-[#D4A156]">
+                          ${Number(order.total_amount).toFixed(2)}
+                        </p>
                       </div>
                       <ChevronRight className="w-6 h-6 text-[#A8A8A8]" />
                     </div>
@@ -179,7 +202,9 @@ export default function MyOrders() {
               <div className="flex items-center justify-end gap-3 mt-4">
                 <Button
                   variant="outline"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -189,7 +214,9 @@ export default function MyOrders() {
                 </p>
                 <Button
                   variant="outline"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, lastPage))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, lastPage))
+                  }
                   disabled={currentPage >= lastPage}
                 >
                   Next
@@ -208,13 +235,41 @@ export default function MyOrders() {
           </button>
 
           <div className="flex items-center gap-4 mb-6 flex-wrap">
-            <h2 className="text-2xl text-[#5C5C5C]">{selectedOrder.order_number}</h2>
+            <h2 className="text-2xl text-[#5C5C5C]">
+              {selectedOrder.order_number}
+            </h2>
             <OrderBadge status={statusLabelMap[selectedOrder.status]} />
           </div>
 
           <div className="mb-6">
-            <p className="text-[#A8A8A8]">{formatDate(selectedOrder.created_at)}</p>
+            <p className="text-[#A8A8A8]">
+              {formatDate(selectedOrder.created_at)}
+            </p>
           </div>
+
+          {selectedOrder.delivery_method === "delivery" && (
+            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+              <p className="text-sm text-[#A8A8A8] mb-1">Delivery Method</p>
+              <p className="text-[#5C5C5C]">Delivery</p>
+              {selectedOrder.assigned_rider ? (
+                <div className="mt-2">
+                  <p className="text-sm text-[#A8A8A8]">Assigned Rider</p>
+                  <p className="text-[#5C5C5C]">
+                    {selectedOrder.assigned_rider.username}
+                  </p>
+                  {selectedOrder.assigned_rider.phone_number && (
+                    <p className="text-sm text-[#5C5C5C]">
+                      {selectedOrder.assigned_rider.phone_number}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-[#A8A8A8] mt-2">
+                  No rider assigned yet
+                </p>
+              )}
+            </div>
+          )}
 
           {selectedOrder.customer_remarks && (
             <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
@@ -227,21 +282,28 @@ export default function MyOrders() {
             <h3 className="text-lg text-[#5C5C5C] mb-4">Order Items</h3>
             <div className="space-y-3">
               {selectedOrder.items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center">
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center"
+                >
                   <div>
                     <p className="text-[#5C5C5C]">{item.name}</p>
                     <p className="text-sm text-[#A8A8A8]">
                       {item.size} × {item.quantity}
                     </p>
                   </div>
-                  <p className="text-[#D4A156]">${(Number(item.price) * item.quantity).toFixed(2)}</p>
+                  <p className="text-[#D4A156]">
+                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                  </p>
                 </div>
               ))}
             </div>
 
             <div className="border-t border-[#E0E0E0] mt-4 pt-4 flex justify-between">
               <span className="text-lg text-[#5C5C5C]">Total</span>
-              <span className="text-xl text-[#D4A156]">${Number(selectedOrder.total_amount).toFixed(2)}</span>
+              <span className="text-xl text-[#D4A156]">
+                ${Number(selectedOrder.total_amount).toFixed(2)}
+              </span>
             </div>
           </div>
 
@@ -259,7 +321,9 @@ export default function MyOrders() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl p-6 shadow-md">
-          <p className="text-[#A8A8A8] mb-4">This order is no longer in the current page/filter.</p>
+          <p className="text-[#A8A8A8] mb-4">
+            This order is no longer in the current page/filter.
+          </p>
           <Button onClick={() => setSelectedOrderId(null)} variant="outline">
             Back to list
           </Button>

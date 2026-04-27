@@ -29,10 +29,16 @@ export function LoginForm() {
       const response = await loginUser(values.email, values.password);
       toast.success("Login successful.");
       const role = (response?.data?.role ?? "").toLowerCase();
-      if(role == "manager"){
-        router.push("/manager")
-      }else if (role == "admin") {
-        router.push("/admin")
+      if (role === "manager") {
+        router.push("/manager");
+      } else if (role === "admin") {
+        router.push("/admin");
+      } else if (role === "customer") {
+        router.push("/customer");
+      } else if (role === "rider") {
+        router.push("/rider");
+      } else {
+        router.push("/");
       }
     } catch (error) {
       const err = error as Error & {

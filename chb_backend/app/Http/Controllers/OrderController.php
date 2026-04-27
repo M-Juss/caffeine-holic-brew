@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -13,10 +14,36 @@ class OrderController extends Controller
 
     private array $relations = [
         'items',
-        'user:id,username,email',
+        'user:id,username,email,address,phone_number',
         'reviewer:id,username',
-        'assigned_rider:id,username',
+        'assigned_rider:id,username,phone_number',
     ];
+
+    // admin
+    public function getDashboardStats(): JsonResponse
+    {
+        $totalSales = Order::where('status', 'completed')->sum('total_amount');
+        $totalOrders = Order::where('status', 'completed')->count();
+
+        // Get popular item from completed orders
+        $popularItem = Order::where('status', 'completed')
+            ->with('items')
+            ->get()
+            ->flatMap(fn($order) => $order->items)
+            ->groupBy('name')
+            ->map(fn($items) => $items->sum('quantity'))
+            ->sortDesc()
+            ->first();
+
+        return response()->json([
+            'message' => 'Dashboard stats retrieved successfully.',
+            'data' => [
+                'total_sales' => $totalSales,
+                'total_orders' => $totalOrders,
+                'popular_item' => $popularItem ? array_key_first($popularItem) : 'N/A',
+            ],
+        ]);
+    }
 
     // admin
     public function index(Request $request): JsonResponse
@@ -88,8 +115,24 @@ class OrderController extends Controller
             'status'           => $newStatus,
             'reviewed_by'      => $request->user()->id,
             'reviewed_at'      => now(),
-            'reviewer_remarks' => $request->reviewer_remarks, 
+            'reviewer_remarks' => $request->reviewer_remarks,
         ]);
+
+        // Set rider status to occupied when order is accepted
+        if ($newStatus === 'accepted' && $order->assigned_rider) {
+            $rider = User::find($order->assigned_rider);
+            if ($rider) {
+                $rider->update(['status' => 'occupied']);
+            }
+        }
+
+        // Set rider status back to active when order is completed
+        if ($newStatus === 'completed' && $order->assigned_rider) {
+            $rider = User::find($order->assigned_rider);
+            if ($rider) {
+                $rider->update(['status' => 'active']);
+            }
+        }
 
         return response()->json([
             'message' => "Order status updated to '{$newStatus}'.",
@@ -146,6 +189,15 @@ class OrderController extends Controller
             ], 422);
         }
 
+        $rider = User::find($request->assigned_rider);
+
+        if (!$rider || $rider->role !== 'rider' || $rider->status !== 'active') {
+            return response()->json([
+                'message' => 'Rider must be an active rider.',
+            ], 422);
+        }
+
+        // Assign rider to the order
         $order->update([
             'assigned_rider' => $request->assigned_rider,
         ]);

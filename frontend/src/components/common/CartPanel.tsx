@@ -1,5 +1,13 @@
+import { useState } from "react";
 import { ShoppingCart, Plus, Minus, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import CheckoutForm from "@/forms/CheckoutForm";
 
 interface CartItem {
   id: number;
@@ -17,9 +25,27 @@ interface CartPanelProps {
   onCheckout: () => void;
 }
 
-export default function CartPanel({ items, onUpdateQuantity, onRemove, onCheckout }: CartPanelProps) {
+export default function CartPanel({
+  items,
+  onUpdateQuantity,
+  onRemove,
+  onCheckout,
+}: CartPanelProps) {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+  const [isCheckoutDialogOpen, setIsCheckoutDialogOpen] = useState(false);
+
+  const handleCheckoutClick = () => {
+    setIsCheckoutDialogOpen(true);
+  };
+
+  const handleCheckoutSuccess = () => {
+    setIsCheckoutDialogOpen(false);
+    onCheckout();
+  };
 
   return (
     <div className="sticky top-6 bg-white rounded-2xl shadow-lg p-6 h-fit">
@@ -37,21 +63,34 @@ export default function CartPanel({ items, onUpdateQuantity, onRemove, onCheckou
         <>
           <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3 pb-4 border-b border-[#E0E0E0]">
-                <img src={item.image} alt={item.name} className="w-16 h-16 rounded-lg object-cover" />
+              <div
+                key={item.id}
+                className="flex gap-3 pb-4 border-b border-[#E0E0E0]"
+              >
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-16 h-16 rounded-lg object-cover"
+                />
                 <div className="flex-1">
                   <h4 className="text-[#5C5C5C] mb-1">{item.name}</h4>
                   <p className="text-sm text-[#A8A8A8] mb-2">{item.size}</p>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        onUpdateQuantity(item.id, item.quantity - 1)
+                      }
                       className="w-6 h-6 rounded-full bg-[#F5F5F5] flex items-center justify-center hover:bg-[#E0E0E0]"
                     >
                       <Minus className="w-3 h-3 text-[#5C5C5C]" />
                     </button>
-                    <span className="text-[#5C5C5C] min-w-[20px] text-center">{item.quantity}</span>
+                    <span className="text-[#5C5C5C] min-w-[20px] text-center">
+                      {item.quantity}
+                    </span>
                     <button
-                      onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        onUpdateQuantity(item.id, item.quantity + 1)
+                      }
                       className="w-6 h-6 rounded-full bg-[#F5F5F5] flex items-center justify-center hover:bg-[#E0E0E0]"
                     >
                       <Plus className="w-3 h-3 text-[#5C5C5C]" />
@@ -81,11 +120,27 @@ export default function CartPanel({ items, onUpdateQuantity, onRemove, onCheckou
           </div>
 
           <Button
-            onClick={onCheckout}
+            onClick={handleCheckoutClick}
             className="w-full bg-[#D4A156] hover:bg-[#C59145] text-white rounded-xl py-6"
           >
             Checkout
           </Button>
+
+          <Dialog
+            open={isCheckoutDialogOpen}
+            onOpenChange={setIsCheckoutDialogOpen}
+          >
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Checkout</DialogTitle>
+              </DialogHeader>
+              <CheckoutForm
+                cartTotal={totalAmount}
+                onSuccess={handleCheckoutSuccess}
+                onCancel={() => setIsCheckoutDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
         </>
       )}
     </div>

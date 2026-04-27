@@ -184,9 +184,9 @@ class CartController extends Controller
         $deliveryFee     = $deliveryMethod === 'delivery' ? 50 : 0;
         $totalAmount     = ($cart->total_amount - $discountAmount) + $deliveryFee;
 
-        if ((float) $request->payment !== (float) $totalAmount) {
+        if ((float) $request->payment < (float) $totalAmount) {
             return response()->json([
-                'message' => 'Payment amount must equal the total amount due.',
+                'message' => 'Payment amount must be at least the total amount due.',
                 'total_amount_due' => $totalAmount,
             ], 422);
         }
@@ -234,7 +234,7 @@ class CartController extends Controller
             ], 201);
         } catch (\Throwable $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Checkout failed.', 'error' => $e->getMessage()], 500);
+            // return response()->json(['message' => 'Checkout failed.', 'error' => $e->getMessage()], 500);
         }
     }
 

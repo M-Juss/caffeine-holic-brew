@@ -40,9 +40,9 @@ class UpdateProfileRequest extends FormRequest
                 'regex:/^\+?[0-9]{7,15}$/',
             ],
             'email' => [
-                'required', 
-                'email', 
-                'unique:users,email'
+                'required',
+                'email',
+                'unique:users,email,' . $this->user()->id
             ]
         ];
     }
