@@ -25,11 +25,11 @@ class RegisterUserRequest extends FormRequest
     {
         return [
             'username' => [
-                'required', 
-                'string', 
-                'min:3', 
-                'max:20', 
-                'regex:/^(?=.*[A-Za-z])[A-Za-z0-9_]+$/'
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+                'regex:/^[A-Za-z\s]+$/'
                 ],
             'email' => [
                 'required', 

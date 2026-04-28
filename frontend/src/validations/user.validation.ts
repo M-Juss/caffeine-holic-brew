@@ -4,8 +4,8 @@ export const createRiderSchema = z
   .object({
     username: z
       .string()
-      .min(1, "Username is required")
-      .max(255, "Username must be less than 255 characters"),
+      .min(1, "Fullname is required")
+      .max(255, "Fullname must be less than 255 characters"),
     email: z
       .string()
       .email("Invalid email address")
@@ -41,8 +41,8 @@ export const createAdminSchema = z
   .object({
     username: z
       .string()
-      .min(1, "Username is required")
-      .max(255, "Username must be less than 255 characters"),
+      .min(1, "Fullname is required")
+      .max(255, "Fullname must be less than 255 characters"),
     email: z
       .string()
       .email("Invalid email address")

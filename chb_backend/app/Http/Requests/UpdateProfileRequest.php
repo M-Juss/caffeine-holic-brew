@@ -27,8 +27,8 @@ class UpdateProfileRequest extends FormRequest
                 'required',
                 'string',
                 'min:3',
-                'max:20',
-                'regex:/^(?=.*[A-Za-z])[A-Za-z0-9_]+$/',
+                'max:255',
+                'regex:/^[A-Za-z\s]+$/'
             ],
             'address' => [
                 'required',

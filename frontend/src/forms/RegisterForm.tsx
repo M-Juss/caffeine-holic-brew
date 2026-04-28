@@ -104,8 +104,8 @@ export function RegisterForm() {
           className="h-10 border-gray-300 focus-visible:ring-accent/40"
           {...register("address")}
         />
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+        {errors.address && (
+          <p className="mt-1 text-xs text-red-500">{errors.address.message}</p>
         )}
       </div>
       <div className="mb-4">
@@ -117,8 +117,8 @@ export function RegisterForm() {
           className="h-10 border-gray-300 focus-visible:ring-accent/40"
           {...register("contact_number")}
         />
-        {errors.email && (
-          <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+        {errors.contact_number && (
+          <p className="mt-1 text-xs text-red-500">{errors.contact_number.message}</p>
         )}
       </div>
       <div className="mb-4">

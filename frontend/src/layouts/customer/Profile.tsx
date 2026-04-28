@@ -263,7 +263,7 @@ export default function Profile() {
 
               <form onSubmit={handleSaveProfile} className="space-y-4 max-w-xl">
                 <div>
-                  <p className="text-sm text-[#A8A8A8] mb-1">Username</p>
+                  <p className="text-sm text-[#A8A8A8] mb-1">Fullname</p>
                   <Input
                     value={profileForm.username}
                     onChange={(event) =>

@@ -112,7 +112,7 @@ class AuthController extends Controller
             ->sum('total_amount');
 
         return response()->json([
-            'message' => 'Profile retrieved successfully.',
+            'message' => 'Profile retrieved su ccessfully.',
             'data' => [
                 'user' => new UserResource($user),
                 'stats' => [
