@@ -154,7 +154,12 @@ export default function Rider() {
                   <div className="flex gap-2 justify-center">
                     <button
                       onClick={() => handleEdit(rider)}
-                      className="bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition"
+                      disabled={rider.status === "occupied"}
+                      className={`bg-white border text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition ${
+                        rider.status === "occupied"
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-gray-50 border-gray-200"
+                      }`}
                     >
                       <Edit className="w-3 h-3" /> Edit
                     </button>

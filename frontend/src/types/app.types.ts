@@ -84,20 +84,25 @@ export type AddCartItemPayload = {
 export type CheckoutPayload = {
   customer_remarks?: string;
   discount_amount?: number;
-  delivery_method: "pick_up" | "delivery";
+  delivery_method: "delivery";
   payment: number;
+  customer_name: string;
+  customer_number: string;
+  customer_address: string;
 };
 
 export type OrderStatus =
   | "pending"
   | "accepted"
   | "preparing"
+  | "out_for_delivery"
   | "completed"
   | "cancelled";
 export type OrderStatusUpdatable =
   | "pending"
   | "accepted"
   | "preparing"
+  | "out_for_delivery"
   | "completed";
 
 export type OrderUser = {
@@ -146,6 +151,9 @@ export type OrderData = {
     username: string;
     phone_number?: string;
   } | null;
+  customer_name?: string;
+  customer_number?: string;
+  customer_address?: string;
 };
 
 export type PaginatedResponse<T> = {
@@ -319,6 +327,7 @@ export type DisplayStatus =
   | "Pending"
   | "Accepted"
   | "Preparing"
+  | "Out for Delivery"
   | "Completed"
   | "Cancelled";
 export type StatusFilter = "All" | DisplayStatus;

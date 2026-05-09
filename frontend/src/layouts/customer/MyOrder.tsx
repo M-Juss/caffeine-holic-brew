@@ -17,6 +17,7 @@ const statusOptions: StatusFilter[] = [
   "Pending",
   "Accepted",
   "Preparing",
+  "Out for Delivery",
   "Completed",
   "Cancelled",
 ];
@@ -25,6 +26,7 @@ const statusLabelMap: Record<OrderStatus, DisplayStatus> = {
   pending: "Pending",
   accepted: "Accepted",
   preparing: "Preparing",
+  out_for_delivery: "Out for Delivery",
   completed: "Completed",
   cancelled: "Cancelled",
 };
@@ -33,6 +35,7 @@ const statusApiMap: Record<Exclude<StatusFilter, "All">, OrderStatus> = {
   Pending: "pending",
   Accepted: "accepted",
   Preparing: "preparing",
+  "Out for Delivery": "out_for_delivery",
   Completed: "completed",
   Cancelled: "cancelled",
 };
@@ -190,7 +193,7 @@ export default function MyOrders() {
                       <div className="text-right">
                         <p className="text-sm text-[#A8A8A8]">Total</p>
                         <p className="text-xl text-[#D4A156]">
-                          ${Number(order.total_amount).toFixed(2)}
+                          ₱{Number(order.total_amount).toFixed(2)}
                         </p>
                       </div>
                       <ChevronRight className="w-6 h-6 text-[#A8A8A8]" />
@@ -247,29 +250,48 @@ export default function MyOrders() {
             </p>
           </div>
 
-          {selectedOrder.delivery_method === "delivery" && (
-            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-              <p className="text-sm text-[#A8A8A8] mb-1">Delivery Method</p>
-              <p className="text-[#5C5C5C]">Delivery</p>
-              {selectedOrder.assigned_rider ? (
-                <div className="mt-2">
-                  <p className="text-sm text-[#A8A8A8]">Assigned Rider</p>
-                  <p className="text-[#5C5C5C]">
-                    {selectedOrder.assigned_rider.username}
-                  </p>
-                  {selectedOrder.assigned_rider.phone_number && (
-                    <p className="text-sm text-[#5C5C5C]">
-                      {selectedOrder.assigned_rider.phone_number}
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <p className="text-sm text-[#A8A8A8] mt-2">
-                  No rider assigned yet
+          <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+            <h3 className="text-lg text-[#5C5C5C] mb-3">
+              Delivery Information
+            </h3>
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm text-[#A8A8A8]">Name</p>
+                <p className="text-[#5C5C5C]">
+                  {selectedOrder.customer_name || "N/A"}
                 </p>
-              )}
+              </div>
+              <div>
+                <p className="text-sm text-[#A8A8A8]">Phone Number</p>
+                <p className="text-[#5C5C5C]">
+                  {selectedOrder.customer_number || "N/A"}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-[#A8A8A8]">Address</p>
+                <p className="text-[#5C5C5C]">
+                  {selectedOrder.customer_address || "N/A"}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-[#A8A8A8]">Delivery Method</p>
+                <p className="text-[#5C5C5C]">Delivery</p>
+              </div>
             </div>
-          )}
+            {selectedOrder.assigned_rider && (
+              <div className="mt-4 pt-4 border-t border-[#E0E0E0]">
+                <p className="text-sm text-[#A8A8A8]">Assigned Rider</p>
+                <p className="text-[#5C5C5C]">
+                  {selectedOrder.assigned_rider.username}
+                </p>
+                {selectedOrder.assigned_rider.phone_number && (
+                  <p className="text-sm text-[#5C5C5C]">
+                    {selectedOrder.assigned_rider.phone_number}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
 
           {selectedOrder.customer_remarks && (
             <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
@@ -293,17 +315,35 @@ export default function MyOrders() {
                     </p>
                   </div>
                   <p className="text-[#D4A156]">
-                    ${(Number(item.price) * item.quantity).toFixed(2)}
+                    ₱{(Number(item.price) * item.quantity).toFixed(2)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <div className="border-t border-[#E0E0E0] mt-4 pt-4 flex justify-between">
-              <span className="text-lg text-[#5C5C5C]">Total</span>
-              <span className="text-xl text-[#D4A156]">
-                ${Number(selectedOrder.total_amount).toFixed(2)}
-              </span>
+            <div className="border-t border-[#E0E0E0] mt-4 pt-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">
+                  ₱
+                  {(
+                    Number(selectedOrder.total_amount) -
+                    (selectedOrder.delivery_fee || 50)
+                  ).toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Delivery Fee:</span>
+                <span className="font-medium">
+                  ₱{selectedOrder.delivery_fee || 50}.00
+                </span>
+              </div>
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total:</span>
+                <span className="text-[#D4A156]">
+                  ₱{Number(selectedOrder.total_amount).toFixed(2)}
+                </span>
+              </div>
             </div>
           </div>
 

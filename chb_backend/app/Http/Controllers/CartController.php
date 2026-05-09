@@ -165,10 +165,13 @@ class CartController extends Controller
     public function checkout(Request $request): JsonResponse
     {
         $request->validate([
-            'customer_remarks' => ['nullable', 'string', 'max:500'],
-            'discount_amount'  => ['nullable', 'numeric', 'min:0'],
-            'delivery_method'  => ['required', 'string', 'in:pick_up,delivery'],
-            'payment'          => ['required', 'numeric', 'min:0'],
+            'customer_remarks'  => ['nullable', 'string', 'max:500'],
+            'discount_amount'   => ['nullable', 'numeric', 'min:0'],
+            'delivery_method'   => ['required', 'string', 'in:delivery'],
+            'payment'           => ['required', 'numeric', 'min:0'],
+            'customer_name'     => ['required', 'string'],
+            'customer_number'   => ['required', 'string'],
+            'customer_address'  => ['required', 'string'],
         ]);
 
         $user = $request->user();
@@ -181,31 +184,27 @@ class CartController extends Controller
 
         $discountAmount  = $request->discount_amount ?? 0;
         $deliveryMethod  = $request->delivery_method;
-        $deliveryFee     = $deliveryMethod === 'delivery' ? 50 : 0;
+        $deliveryFee     = 50;
         $totalAmount     = ($cart->total_amount - $discountAmount) + $deliveryFee;
-
-        if ((float) $request->payment < (float) $totalAmount) {
-            return response()->json([
-                'message' => 'Payment amount must be at least the total amount due.',
-                'total_amount_due' => $totalAmount,
-            ], 422);
-        }
 
         DB::beginTransaction();
 
         try {
             $order = Order::create([
-                'user_id'          => $user->id,
-                'order_number'     => 'ORD-' . strtoupper(Str::random(10)),
-                'total_amount'     => $totalAmount,
-                'discount_amount'  => $discountAmount,
-                'total_items'      => $cart->total_items,
-                'customer_remarks' => $request->customer_remarks,
-                'status'           => 'pending',
-                'delivery_method'  => $deliveryMethod,
-                'delivery_fee'     => $deliveryFee,
-                'payment'          => $request->payment,
-                'assigned_rider'   => null,
+                'user_id'           => $user->id,
+                'order_number'      => 'ORD-' . strtoupper(Str::random(10)),
+                'total_amount'      => $totalAmount,
+                'discount_amount'   => $discountAmount,
+                'total_items'       => $cart->total_items,
+                'customer_remarks'  => $request->customer_remarks,
+                'status'            => 'pending',
+                'delivery_method'   => $deliveryMethod,
+                'delivery_fee'      => $deliveryFee,
+                'payment'           => $request->payment,
+                'assigned_rider'    => null,
+                'customer_name'     => $request->customer_name,
+                'customer_number'   => $request->customer_number,
+                'customer_address'  => $request->customer_address,
             ]);
 
             $orderItems = $cart->items->map(fn(CartItem $item) => [

@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
-    const STATUSES = ['pending', 'accepted', 'preparing', 'completed', 'cancelled'];
+    const STATUSES = ['pending', 'accepted', 'preparing', 'out_for_delivery', 'completed', 'cancelled'];
 
     private array $relations = [
         'items',
@@ -164,10 +164,11 @@ class OrderController extends Controller
     private function allowedTransitions(string $currentStatus): array
     {
         return match ($currentStatus) {
-            'pending'   => ['accepted'],
-            'accepted'  => ['preparing'],
-            'preparing' => ['completed'],
-            default     => [],
+            'pending'          => ['accepted'],
+            'accepted'         => ['preparing'],
+            'preparing'        => ['out_for_delivery'],
+            'out_for_delivery' => ['completed'],
+            default            => [],
         };
     }
 

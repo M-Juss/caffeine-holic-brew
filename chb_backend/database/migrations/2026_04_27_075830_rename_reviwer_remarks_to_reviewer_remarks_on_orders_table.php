@@ -11,15 +11,11 @@ return new class extends Migration
      */
 public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->renameColumn('reviwer_remarks', 'reviewer_remarks');
-        });
+        // Column already exists with correct name, skip
     }
 
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->renameColumn('reviewer_remarks', 'reviwer_remarks');
-        });
+        // No action needed
     }
 };

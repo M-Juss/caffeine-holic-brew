@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type ElementType } from "react";
+import { useState, useEffect, type ElementType } from "react";
 import { Coffee, Heart, LogOut, ShoppingBag } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MenuManagement from "@/layouts/admin/Menu";
 import OrdersManagement from "@/layouts/admin/Order";
 import Dashboard from "@/layouts/admin/Dashboard";
@@ -12,7 +12,30 @@ type TabKey = "dashboard" | "orders" | "menu";
 
 export default function CustomerPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as TabKey | null;
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (typeof window !== "undefined") {
+      const savedTab = localStorage.getItem("admin_tab") as TabKey | null;
+      if (
+        tabParam &&
+        (tabParam === "dashboard" ||
+          tabParam === "orders" ||
+          tabParam === "menu")
+      ) {
+        return tabParam;
+      }
+      return savedTab || "dashboard";
+    }
+    return tabParam || "dashboard";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("admin_tab", activeTab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", activeTab);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeTab]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
@@ -20,6 +43,7 @@ export default function CustomerPage() {
 
     localStorage.removeItem("auth_token");
     localStorage.removeItem("authorization");
+    localStorage.removeItem("admin_tab");
     router.push("/login");
   };
 

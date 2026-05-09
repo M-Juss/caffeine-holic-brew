@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, type ElementType } from "react";
-import { Coffee, Heart, LogOut, ShoppingBag, Motorbike, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, type ElementType } from "react";
+import {
+  Coffee,
+  Heart,
+  LogOut,
+  ShoppingBag,
+  Motorbike,
+  User,
+} from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MenuManagement from "@/layouts/admin/Menu";
 import OrdersManagement from "@/layouts/admin/Order";
 import Dashboard from "@/layouts/admin/Dashboard";
@@ -14,7 +21,32 @@ type TabKey = "dashboard" | "orders" | "menu" | "rider" | "admin";
 
 export default function CustomerPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabKey>("dashboard");
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab") as TabKey | null;
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (typeof window !== "undefined") {
+      const savedTab = localStorage.getItem("manager_tab") as TabKey | null;
+      if (
+        tabParam &&
+        (tabParam === "dashboard" ||
+          tabParam === "orders" ||
+          tabParam === "menu" ||
+          tabParam === "rider" ||
+          tabParam === "admin")
+      ) {
+        return tabParam;
+      }
+      return savedTab || "dashboard";
+    }
+    return tabParam || "dashboard";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("manager_tab", activeTab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", activeTab);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeTab]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
@@ -22,6 +54,7 @@ export default function CustomerPage() {
 
     localStorage.removeItem("auth_token");
     localStorage.removeItem("authorization");
+    localStorage.removeItem("manager_tab");
     router.push("/login");
   };
 

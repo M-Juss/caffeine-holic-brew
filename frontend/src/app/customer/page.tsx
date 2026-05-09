@@ -15,19 +15,29 @@ export default function CustomerPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as TabKey | null;
-  const [activeTab, setActiveTab] = useState<TabKey>("menu");
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (typeof window !== "undefined") {
+      const savedTab = localStorage.getItem("customer_tab") as TabKey | null;
+      if (
+        tabParam &&
+        (tabParam === "menu" ||
+          tabParam === "orders" ||
+          tabParam === "favorites" ||
+          tabParam === "profile")
+      ) {
+        return tabParam;
+      }
+      return savedTab || "menu";
+    }
+    return tabParam || "menu";
+  });
 
   useEffect(() => {
-    if (
-      tabParam &&
-      (tabParam === "menu" ||
-        tabParam === "orders" ||
-        tabParam === "favorites" ||
-        tabParam === "profile")
-    ) {
-      setActiveTab(tabParam);
-    }
-  }, [tabParam]);
+    localStorage.setItem("customer_tab", activeTab);
+    const url = new URL(window.location.href);
+    url.searchParams.set("tab", activeTab);
+    window.history.replaceState({}, "", url.toString());
+  }, [activeTab]);
 
   const handleLogout = () => {
     const confirmed = window.confirm("Are you sure you want to logout?");
@@ -35,6 +45,7 @@ export default function CustomerPage() {
 
     localStorage.removeItem("auth_token");
     localStorage.removeItem("authorization");
+    localStorage.removeItem("customer_tab");
     router.push("/login");
   };
 

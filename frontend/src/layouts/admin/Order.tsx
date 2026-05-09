@@ -25,6 +25,7 @@ const statusOptions: StatusFilter[] = [
   "Pending",
   "Accepted",
   "Preparing",
+  "Out for Delivery",
   "Completed",
   "Cancelled",
 ];
@@ -33,6 +34,7 @@ const statusLabelMap: Record<OrderStatus, DisplayStatus> = {
   pending: "Pending",
   accepted: "Accepted",
   preparing: "Preparing",
+  out_for_delivery: "Out for Delivery",
   completed: "Completed",
   cancelled: "Cancelled",
 };
@@ -41,6 +43,7 @@ const statusApiMap: Record<Exclude<StatusFilter, "All">, OrderStatus> = {
   Pending: "pending",
   Accepted: "accepted",
   Preparing: "preparing",
+  "Out for Delivery": "out_for_delivery",
   Completed: "completed",
   Cancelled: "cancelled",
 };
@@ -123,7 +126,7 @@ export default function OrdersManagement() {
 
   const handleUpdateStatus = async (
     orderId: number,
-    status: "accepted" | "preparing" | "completed",
+    status: "out_for_delivery" | "accepted" | "preparing" | "completed",
     successMessage: string,
   ) => {
     setUpdatingOrderId(orderId);
@@ -442,11 +445,29 @@ export default function OrdersManagement() {
               ))}
             </div>
 
-            <div className="border-t border-[#E0E0E0] mt-4 pt-4 flex justify-between">
-              <span className="text-lg text-[#5C5C5C]">Total</span>
-              <span className="text-xl text-[#D4A156]">
-                ₱{Number(selectedOrder.total_amount).toFixed(2)}
-              </span>
+            <div className="border-t border-[#E0E0E0] mt-4 pt-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal:</span>
+                <span className="font-medium">
+                  ₱
+                  {(
+                    Number(selectedOrder.total_amount) -
+                    (selectedOrder.delivery_fee || 50)
+                  ).toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Delivery Fee:</span>
+                <span className="font-medium">
+                  ₱{selectedOrder.delivery_fee || 50}.00
+                </span>
+              </div>
+              <div className="flex justify-between text-lg font-bold">
+                <span>Total:</span>
+                <span className="text-[#D4A156]">
+                  ₱{Number(selectedOrder.total_amount).toFixed(2)}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -488,6 +509,22 @@ export default function OrdersManagement() {
             )}
 
             {selectedOrder.status === "preparing" && (
+              <Button
+                onClick={() =>
+                  void handleUpdateStatus(
+                    selectedOrder.id,
+                    "out_for_delivery",
+                    "Order moved to out for delivery",
+                  )
+                }
+                disabled={updatingOrderId === selectedOrder.id}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Out for Delivery
+              </Button>
+            )}
+
+            {selectedOrder.status === "out_for_delivery" && (
               <Button
                 onClick={() =>
                   void handleUpdateStatus(

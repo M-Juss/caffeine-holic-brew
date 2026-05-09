@@ -42,7 +42,7 @@ export const createAccountSchema = z
     password_confirmation: z.string().trim().nonempty("Password is Required!"),
   })
   .refine((data) => data.password === data.password_confirmation, {
-    path: ["confirm_password"],
+    path: ["password_confirmation"],
     message: "Password do not match",
   });
 

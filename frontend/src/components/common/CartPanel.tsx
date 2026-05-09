@@ -135,6 +135,7 @@ export default function CartPanel({
                 <DialogTitle>Checkout</DialogTitle>
               </DialogHeader>
               <CheckoutForm
+                cartItems={items}
                 cartTotal={totalAmount}
                 onSuccess={handleCheckoutSuccess}
                 onCancel={() => setIsCheckoutDialogOpen(false)}
