@@ -126,12 +126,14 @@ export default function MyOrders() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-[#5C5C5C] mb-6">My Orders</h1>
+    <div className="p-4 lg:p-6">
+      <h1 className="text-2xl lg:text-3xl text-[#5C5C5C] mb-4 lg:mb-6">
+        My Orders
+      </h1>
 
       {!selectedOrderId ? (
         <>
-          <div className="flex gap-2 mb-6 flex-wrap">
+          <div className="flex gap-2 mb-4 lg:mb-6 flex-wrap">
             {statusOptions.map((status) => (
               <button
                 key={status}
@@ -140,7 +142,7 @@ export default function MyOrders() {
                   setCurrentPage(1);
                   setSelectedOrderId(null);
                 }}
-                className={`px-4 py-2 rounded-xl transition-all ${
+                className={`px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm transition-all ${
                   filter === status
                     ? "bg-[#D4A156] text-white"
                     : "bg-white text-[#5C5C5C] hover:bg-[#F5F5F5]"
@@ -152,11 +154,11 @@ export default function MyOrders() {
           </div>
 
           {isLoading ? (
-            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">
+            <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md text-[#A8A8A8]">
               Loading orders...
             </div>
           ) : error ? (
-            <div className="bg-white rounded-2xl p-6 shadow-md">
+            <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md">
               <p className="text-red-600 mb-4">{error}</p>
               <Button
                 onClick={() => setRefreshKey((prev) => prev + 1)}
@@ -166,53 +168,56 @@ export default function MyOrders() {
               </Button>
             </div>
           ) : orders.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 shadow-md text-[#A8A8A8]">
+            <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md text-[#A8A8A8]">
               No orders found.
             </div>
           ) : (
             <>
-              <div className="space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 {orders.map((order) => (
                   <button
                     key={order.id}
                     onClick={() => setSelectedOrderId(order.id)}
-                    className="w-full bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all flex items-center justify-between text-left"
+                    className="w-full bg-white rounded-2xl p-4 lg:p-6 shadow-md hover:shadow-lg transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between text-left gap-3"
                   >
                     <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2 flex-wrap">
-                        <h3 className="text-xl text-[#5C5C5C]">
+                      <div className="flex items-center gap-2 lg:gap-4 mb-2 flex-wrap">
+                        <h3 className="text-base lg:text-xl text-[#5C5C5C]">
                           {order.order_number}
                         </h3>
                         <OrderBadge status={statusLabelMap[order.status]} />
                       </div>
-                      <p className="text-sm text-[#A8A8A8]">
+                      <p className="text-xs lg:text-sm text-[#A8A8A8]">
                         {formatDate(order.created_at)}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 lg:gap-4 w-full sm:w-auto justify-between sm:justify-end">
                       <div className="text-right">
-                        <p className="text-sm text-[#A8A8A8]">Total</p>
-                        <p className="text-xl text-[#D4A156]">
+                        <p className="text-xs lg:text-sm text-[#A8A8A8]">
+                          Total
+                        </p>
+                        <p className="text-lg lg:text-xl text-[#D4A156]">
                           ₱{Number(order.total_amount).toFixed(2)}
                         </p>
                       </div>
-                      <ChevronRight className="w-6 h-6 text-[#A8A8A8]" />
+                      <ChevronRight className="w-5 h-5 lg:w-6 lg:h-6 text-[#A8A8A8]" />
                     </div>
                   </button>
                 ))}
               </div>
 
-              <div className="flex items-center justify-end gap-3 mt-4">
+              <div className="flex items-center justify-end gap-2 lg:gap-3 mt-4 flex-wrap">
                 <Button
                   variant="outline"
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  className="text-xs lg:text-sm"
                 >
                   Previous
                 </Button>
-                <p className="text-sm text-[#5C5C5C]">
+                <p className="text-xs lg:text-sm text-[#5C5C5C]">
                   Page {currentPage} of {lastPage}
                 </p>
                 <Button
@@ -221,6 +226,7 @@ export default function MyOrders() {
                     setCurrentPage((prev) => Math.min(prev + 1, lastPage))
                   }
                   disabled={currentPage >= lastPage}
+                  className="text-xs lg:text-sm"
                 >
                   Next
                 </Button>
@@ -229,16 +235,16 @@ export default function MyOrders() {
           )}
         </>
       ) : selectedOrder ? (
-        <div className="bg-white rounded-2xl p-6 shadow-md">
+        <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md">
           <button
             onClick={() => setSelectedOrderId(null)}
-            className="text-[#D4A156] mb-4 hover:underline"
+            className="text-[#D4A156] mb-4 hover:underline text-sm lg:text-base"
           >
             ← Back to Orders
           </button>
 
-          <div className="flex items-center gap-4 mb-6 flex-wrap">
-            <h2 className="text-2xl text-[#5C5C5C]">
+          <div className="flex items-center gap-2 lg:gap-4 mb-4 lg:mb-6 flex-wrap">
+            <h2 className="text-xl lg:text-2xl text-[#5C5C5C]">
               {selectedOrder.order_number}
             </h2>
             <OrderBadge status={statusLabelMap[selectedOrder.status]} />
@@ -250,8 +256,8 @@ export default function MyOrders() {
             </p>
           </div>
 
-          <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-            <h3 className="text-lg text-[#5C5C5C] mb-3">
+          <div className="mb-4 lg:mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+            <h3 className="text-base lg:text-lg text-[#5C5C5C] mb-3">
               Delivery Information
             </h3>
             <div className="space-y-2">
@@ -294,27 +300,35 @@ export default function MyOrders() {
           </div>
 
           {selectedOrder.customer_remarks && (
-            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-              <p className="text-sm text-[#A8A8A8] mb-1">Your Remarks</p>
-              <p className="text-[#5C5C5C]">{selectedOrder.customer_remarks}</p>
+            <div className="mb-4 lg:mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+              <p className="text-xs lg:text-sm text-[#A8A8A8] mb-1">
+                Your Remarks
+              </p>
+              <p className="text-sm lg:text-base text-[#5C5C5C]">
+                {selectedOrder.customer_remarks}
+              </p>
             </div>
           )}
 
           <div className="border-t border-[#E0E0E0] pt-4">
-            <h3 className="text-lg text-[#5C5C5C] mb-4">Order Items</h3>
+            <h3 className="text-base lg:text-lg text-[#5C5C5C] mb-4">
+              Order Items
+            </h3>
             <div className="space-y-3">
               {selectedOrder.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center"
+                  className="flex justify-between items-center gap-2"
                 >
-                  <div>
-                    <p className="text-[#5C5C5C]">{item.name}</p>
-                    <p className="text-sm text-[#A8A8A8]">
+                  <div className="flex-1">
+                    <p className="text-sm lg:text-base text-[#5C5C5C]">
+                      {item.name}
+                    </p>
+                    <p className="text-xs lg:text-sm text-[#A8A8A8]">
                       {item.size} × {item.quantity}
                     </p>
                   </div>
-                  <p className="text-[#D4A156]">
+                  <p className="text-sm lg:text-base text-[#D4A156]">
                     ₱{(Number(item.price) * item.quantity).toFixed(2)}
                   </p>
                 </div>
@@ -338,7 +352,7 @@ export default function MyOrders() {
                   ₱{selectedOrder.delivery_fee || 50}.00
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-bold">
+              <div className="flex justify-between text-base lg:text-lg font-bold">
                 <span>Total:</span>
                 <span className="text-[#D4A156]">
                   ₱{Number(selectedOrder.total_amount).toFixed(2)}
@@ -360,11 +374,15 @@ export default function MyOrders() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-2xl p-6 shadow-md">
-          <p className="text-[#A8A8A8] mb-4">
+        <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md">
+          <p className="text-xs lg:text-sm text-[#A8A8A8] mb-4">
             This order is no longer in the current page/filter.
           </p>
-          <Button onClick={() => setSelectedOrderId(null)} variant="outline">
+          <Button
+            onClick={() => setSelectedOrderId(null)}
+            variant="outline"
+            className="text-xs lg:text-sm"
+          >
             Back to list
           </Button>
         </div>

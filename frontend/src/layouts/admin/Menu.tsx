@@ -160,14 +160,14 @@ export default function MenuManagement() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl text-[#5C5C5C]">Menu Management</h1>
+    <div className="p-4 lg:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 lg:mb-6 gap-4">
+        <h1 className="text-2xl lg:text-3xl text-[#5C5C5C]">Menu Management</h1>
         <Button
-          className="bg-[#D4A156] p-5 hover:bg-[#C59145] text-white"
+          className="bg-[#D4A156] p-3 lg:p-5 hover:bg-[#C59145] text-white text-xs lg:text-sm"
           onClick={openAddForm}
         >
-          <Plus className="w-5 h-5 mr-2" />
+          <Plus className="w-4 h-4 lg:w-5 lg:h-5 mr-2" />
           Add New Menu
         </Button>
       </div>
@@ -216,9 +216,11 @@ export default function MenuManagement() {
       </Dialog>
 
       {isLoadingMenus ? (
-        <p className="text-sm text-[#A8A8A8]">Loading menu items...</p>
+        <p className="text-xs lg:text-sm text-[#A8A8A8]">
+          Loading menu items...
+        </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3 lg:space-y-4">
           {menuItems.map((item) => (
             <MenuAdminCard
               key={item.id}

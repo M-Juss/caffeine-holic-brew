@@ -59,14 +59,14 @@ export default function Rider() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-start mb-7">
+    <div className="p-4 lg:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-7 gap-4">
         <div>
-          <h1 className="text-3xl text-[#5C5C5C]">Manage Riders</h1>
+          <h1 className="text-2xl lg:text-3xl text-[#5C5C5C]">Manage Riders</h1>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#D4A156] px-4 py-2 hover:bg-[#C59145] text-white">
+            <Button className="bg-[#D4A156] px-3 lg:px-4 py-2 hover:bg-[#C59145] text-white text-xs lg:text-sm">
               <Plus className="w-4 h-4 mr-2" />
               Add New Rider
             </Button>
@@ -99,83 +99,87 @@ export default function Rider() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-50 border-b-2 border-gray-100">
-              {["Full Name", "Email", "Phone Number", "Status", "Action"].map(
-                (col) => (
-                  <th
-                    key={col}
-                    className={`px-3 py-3 text-xs font-bold text-gray-400 uppercase tracking-widest ${col === "Action" ? "text-center" : "text-left"}`}
-                  >
-                    {col}
-                  </th>
-                ),
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {riders.map((rider, idx) => (
-              <tr
-                key={rider.id}
-                className={`transition-colors hover:bg-gray-50 ${idx < riders.length - 1 ? "border-b border-gray-100" : ""}`}
-              >
-                <td className="px-3 py-3">
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-gray-800 text-sm">
-                      {rider.username}
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-[500px]">
+            <thead>
+              <tr className="bg-gray-50 border-b-2 border-gray-100">
+                {["Full Name", "Email", "Phone Number", "Status", "Action"].map(
+                  (col) => (
+                    <th
+                      key={col}
+                      className={`px-2 lg:px-3 py-3 text-xs font-bold text-gray-400 uppercase tracking-widest ${col === "Action" ? "text-center" : "text-left"}`}
+                    >
+                      {col}
+                    </th>
+                  ),
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {riders.map((rider, idx) => (
+                <tr
+                  key={rider.id}
+                  className={`transition-colors hover:bg-gray-50 ${idx < riders.length - 1 ? "border-b border-gray-100" : ""}`}
+                >
+                  <td className="px-2 lg:px-3 py-3">
+                    <div className="flex items-center gap-2 lg:gap-3">
+                      <span className="font-semibold text-gray-800 text-xs lg:text-sm">
+                        {rider.username}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td className="px-2 lg:px-3 py-3">
+                    <span className="text-gray-500 text-xs lg:text-sm">
+                      {rider.email}
                     </span>
-                  </div>
-                </td>
+                  </td>
 
-                <td className="px-3 py-3">
-                  <span className="text-gray-500 text-sm">{rider.email}</span>
-                </td>
+                  <td className="px-2 lg:px-3 py-3">
+                    <span className="text-gray-700 text-xs lg:text-sm">
+                      {rider.phone_number}
+                    </span>
+                  </td>
 
-                <td className="px-3 py-3">
-                  <span className="text-gray-700 text-sm">
-                    {rider.phone_number}
-                  </span>
-                </td>
-
-                <td className="px-3 py-3">
-                  <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
-                      rider.status.toLowerCase() === "active"
-                        ? "bg-green-100 text-green-600"
-                        : "bg-red-100 text-red-500"
-                    }`}
-                  >
-                    {rider.status}
-                  </span>
-                </td>
-
-                <td className="px-3 py-3 text-center">
-                  <div className="flex gap-2 justify-center">
-                    <button
-                      onClick={() => handleEdit(rider)}
-                      disabled={rider.status === "occupied"}
-                      className={`bg-white border text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition ${
-                        rider.status === "occupied"
-                          ? "opacity-50 cursor-not-allowed"
-                          : "hover:bg-gray-50 border-gray-200"
+                  <td className="px-2 lg:px-3 py-3">
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        rider.status.toLowerCase() === "active"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-red-100 text-red-500"
                       }`}
                     >
-                      <Edit className="w-3 h-3" /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(rider.id)}
-                      className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 gap-1 py-1.5 rounded-lg flex items-center transition"
-                    >
-                      <Trash className="w-3 h-3" />
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      {rider.status}
+                    </span>
+                  </td>
+
+                  <td className="px-2 lg:px-3 py-3 text-center">
+                    <div className="flex gap-1 lg:gap-2 justify-center">
+                      <button
+                        onClick={() => handleEdit(rider)}
+                        disabled={rider.status === "occupied"}
+                        className={`bg-white border text-gray-700 text-xs font-semibold px-2 lg:px-3 py-1.5 rounded-lg flex items-center gap-1 lg:gap-1.5 transition ${
+                          rider.status === "occupied"
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        <Edit className="w-3 h-3" /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(rider.id)}
+                        className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 gap-1 py-1.5 rounded-lg flex items-center transition"
+                      >
+                        <Trash className="w-3 h-3" />
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

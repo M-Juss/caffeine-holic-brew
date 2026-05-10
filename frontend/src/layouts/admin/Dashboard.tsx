@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {  PhilippinePeso, ShoppingBag, TrendingUp } from "lucide-react";
+import { PhilippinePeso, ShoppingBag, TrendingUp } from "lucide-react";
 import { getDashboardData } from "@/services/dashboard.api";
 import { toast } from "sonner";
 
@@ -83,50 +83,58 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-[#5C5C5C] mb-6">Dashboard</h1>
+    <div className="p-4 lg:p-6">
+      <h1 className="text-2xl lg:text-3xl text-[#5C5C5C] mb-4 lg:mb-6">
+        Dashboard
+      </h1>
 
       {isLoading ? (
-        <div className="bg-white rounded-2xl p-8 shadow-md text-[#A8A8A8]">
+        <div className="bg-white rounded-2xl p-4 lg:p-8 shadow-md text-[#A8A8A8]">
           Loading dashboard...
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-4 lg:mb-8">
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="bg-white rounded-2xl p-6 shadow-md"
+                className="bg-white rounded-2xl p-4 lg:p-6 shadow-md"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`w-12 h-12 ${stat.color} rounded-xl flex items-center justify-center`}
+                    className={`w-10 h-10 lg:w-12 lg:h-12 ${stat.color} rounded-xl flex items-center justify-center`}
                   >
-                    <stat.icon className="w-6 h-6 text-white" />
+                    <stat.icon className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
                   </div>
                 </div>
-                <p className="text-[#A8A8A8] text-sm mb-1">{stat.label}</p>
-                <p className="text-2xl text-[#5C5C5C]">{stat.value}</p>
+                <p className="text-xs lg:text-sm text-[#A8A8A8] mb-1">
+                  {stat.label}
+                </p>
+                <p className="text-xl lg:text-2xl text-[#5C5C5C]">
+                  {stat.value}
+                </p>
               </div>
             ))}
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-md">
-            <h2 className="text-xl text-[#5C5C5C] mb-4">Recent Orders</h2>
+          <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md">
+            <h2 className="text-lg lg:text-xl text-[#5C5C5C] mb-4">
+              Recent Orders
+            </h2>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[500px]">
                 <thead>
                   <tr className="border-b border-[#E0E0E0]">
-                    <th className="text-left py-3 px-4 text-[#5C5C5C]">
+                    <th className="text-left py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                       Order
                     </th>
-                    <th className="text-left py-3 px-4 text-[#5C5C5C]">
+                    <th className="text-left py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                       Customer
                     </th>
-                    <th className="text-left py-3 px-4 text-[#5C5C5C]">
+                    <th className="text-left py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                       Total
                     </th>
-                    <th className="text-left py-3 px-4 text-[#5C5C5C]">
+                    <th className="text-left py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                       Status
                     </th>
                   </tr>
@@ -134,18 +142,18 @@ export default function Dashboard() {
                 <tbody>
                   {recentOrders.map((order) => (
                     <tr key={order.order} className="border-b border-[#E0E0E0]">
-                      <td className="py-3 px-4 text-[#5C5C5C]">
+                      <td className="py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                         {order.order}
                       </td>
-                      <td className="py-3 px-4 text-[#5C5C5C]">
+                      <td className="py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#5C5C5C]">
                         {order.customer}
                       </td>
-                      <td className="py-3 px-4 text-[#D4A156]">
+                      <td className="py-3 px-3 lg:px-4 text-xs lg:text-sm text-[#D4A156]">
                         ₱{order.total.toFixed(2)}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-3 lg:px-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm ${
+                          className={`px-2 lg:px-3 py-1 rounded-full text-xs lg:text-sm ${
                             order.status === "Completed"
                               ? "bg-green-100 text-green-800"
                               : order.status === "Preparing"

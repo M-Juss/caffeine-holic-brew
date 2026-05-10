@@ -179,12 +179,14 @@ export default function OrdersManagement() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-[#5C5C5C] mb-6">Orders Management</h1>
+    <div className="p-4 lg:p-6">
+      <h1 className="text-2xl lg:text-3xl text-[#5C5C5C] mb-4 lg:mb-6">
+        Orders Management
+      </h1>
 
       {!selectedOrderId ? (
         <>
-          <div className="flex gap-2 mb-6 flex-wrap">
+          <div className="flex gap-2 mb-4 lg:mb-6 flex-wrap">
             {statusOptions.map((status) => (
               <button
                 key={status}
@@ -193,7 +195,7 @@ export default function OrdersManagement() {
                   setCurrentPage(1);
                   setSelectedOrderId(null);
                 }}
-                className={`px-4 py-2 rounded-xl transition-all ${
+                className={`px-3 lg:px-4 py-2 rounded-xl text-xs lg:text-sm transition-all ${
                   filter === status
                     ? "bg-[#D4A156] text-white"
                     : "bg-white text-[#5C5C5C] hover:bg-[#F5F5F5]"
@@ -205,93 +207,99 @@ export default function OrdersManagement() {
           </div>
 
           {isLoading ? (
-            <div className="bg-white rounded-2xl shadow-md p-6 text-[#A8A8A8]">
+            <div className="bg-white rounded-2xl shadow-md p-4 lg:p-6 text-[#A8A8A8]">
               Loading orders...
             </div>
           ) : error ? (
-            <div className="bg-white rounded-2xl shadow-md p-6">
+            <div className="bg-white rounded-2xl shadow-md p-4 lg:p-6">
               <p className="text-red-600 mb-4">{error}</p>
               <Button
                 onClick={() => setRefreshKey((prev) => prev + 1)}
-                className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+                className="bg-[#D4A156] hover:bg-[#C59145] text-white text-xs lg:text-sm"
               >
                 Retry
               </Button>
             </div>
           ) : orders.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-md p-6 text-[#A8A8A8]">
+            <div className="bg-white rounded-2xl shadow-md p-4 lg:p-6 text-[#A8A8A8]">
               No orders found.
             </div>
           ) : (
             <>
               <div className="bg-white rounded-2xl shadow-md overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-[#F5F5F5]">
-                    <tr>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Order Number
-                      </th>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Customer
-                      </th>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Date
-                      </th>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Total
-                      </th>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Status
-                      </th>
-                      <th className="text-left py-4 px-6 text-[#5C5C5C]">
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orders.map((order) => (
-                      <tr key={order.id} className="border-b border-[#E0E0E0]">
-                        <td className="py-4 px-6 text-[#5C5C5C]">
-                          {order.order_number}
-                        </td>
-                        <td className="py-4 px-6 text-[#5C5C5C]">
-                          {order.user?.username || `User #${order.user_id}`}
-                        </td>
-                        <td className="py-4 px-6 text-[#A8A8A8] text-sm">
-                          {formatDate(order.created_at)}
-                        </td>
-                        <td className="py-4 px-6 text-[#D4A156]">
-                          ₱ {Number(order.total_amount).toFixed(2)}
-                        </td>
-                        <td className="py-4 px-6">
-                          <OrderBadge status={statusLabelMap[order.status]} />
-                        </td>
-                        <td className="py-4 px-6">
-                          <Button
-                            onClick={() => setSelectedOrderId(order.id)}
-                            variant="outline"
-                            className="text-[#D4A156] border-[#D4A156] hover:bg-[#D4A156] hover:text-white"
-                          >
-                            View
-                          </Button>
-                        </td>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[600px]">
+                    <thead className="bg-[#F5F5F5]">
+                      <tr>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Order Number
+                        </th>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Customer
+                        </th>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Date
+                        </th>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Total
+                        </th>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Status
+                        </th>
+                        <th className="text-left py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                          Action
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {orders.map((order) => (
+                        <tr
+                          key={order.id}
+                          className="border-b border-[#E0E0E0]"
+                        >
+                          <td className="py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                            {order.order_number}
+                          </td>
+                          <td className="py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#5C5C5C]">
+                            {order.user?.username || `User #${order.user_id}`}
+                          </td>
+                          <td className="py-3 lg:py-4 px-3 lg:px-6 text-[#A8A8A8] text-xs lg:text-sm">
+                            {formatDate(order.created_at)}
+                          </td>
+                          <td className="py-3 lg:py-4 px-3 lg:px-6 text-xs lg:text-sm text-[#D4A156]">
+                            ₱ {Number(order.total_amount).toFixed(2)}
+                          </td>
+                          <td className="py-3 lg:py-4 px-3 lg:px-6">
+                            <OrderBadge status={statusLabelMap[order.status]} />
+                          </td>
+                          <td className="py-3 lg:py-4 px-3 lg:px-6">
+                            <Button
+                              onClick={() => setSelectedOrderId(order.id)}
+                              variant="outline"
+                              className="text-[#D4A156] border-[#D4A156] hover:bg-[#D4A156] hover:text-white text-xs lg:text-sm"
+                            >
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 mt-4">
+              <div className="flex items-center justify-end gap-2 lg:gap-3 mt-4 flex-wrap">
                 <Button
                   variant="outline"
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
                   }
                   disabled={currentPage === 1}
+                  className="text-xs lg:text-sm"
                 >
                   Previous
                 </Button>
-                <p className="text-sm text-[#5C5C5C]">
+                <p className="text-xs lg:text-sm text-[#5C5C5C]">
                   Page {currentPage} of {lastPage}
                 </p>
                 <Button
@@ -300,6 +308,7 @@ export default function OrdersManagement() {
                     setCurrentPage((prev) => Math.min(prev + 1, lastPage))
                   }
                   disabled={currentPage >= lastPage}
+                  className="text-xs lg:text-sm"
                 >
                   Next
                 </Button>
@@ -308,40 +317,42 @@ export default function OrdersManagement() {
           )}
         </>
       ) : selectedOrder ? (
-        <div className="bg-white rounded-2xl p-6 shadow-md">
+        <div className="bg-white rounded-2xl p-4 lg:p-6 shadow-md">
           <button
             onClick={() => setSelectedOrderId(null)}
-            className="text-[#D4A156] mb-4 hover:underline"
+            className="text-[#D4A156] mb-4 hover:underline text-sm lg:text-base"
           >
             ← Back to Orders
           </button>
 
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <h2 className="text-2xl text-[#5C5C5C]">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 lg:mb-6 gap-4">
+            <div className="flex items-center gap-2 lg:gap-4">
+              <h2 className="text-xl lg:text-2xl text-[#5C5C5C]">
                 {selectedOrder.order_number}
               </h2>
               <OrderBadge status={statusLabelMap[selectedOrder.status]} />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 mb-4 lg:mb-6">
             <div>
-              <p className="text-sm text-[#A8A8A8]">Customer</p>
-              <p className="text-[#5C5C5C]">
+              <p className="text-xs lg:text-sm text-[#A8A8A8]">Customer</p>
+              <p className="text-sm lg:text-base text-[#5C5C5C]">
                 {selectedOrder.user?.username ||
                   `User #${selectedOrder.user_id}`}
               </p>
             </div>
             <div>
-              <p className="text-sm text-[#A8A8A8]">Date</p>
-              <p className="text-[#5C5C5C]">
+              <p className="text-xs lg:text-sm text-[#A8A8A8]">Date</p>
+              <p className="text-sm lg:text-base text-[#5C5C5C]">
                 {formatDate(selectedOrder.created_at)}
               </p>
             </div>
             <div>
-              <p className="text-sm text-[#A8A8A8]">Delivery Method</p>
-              <p className="text-[#5C5C5C] capitalize">
+              <p className="text-xs lg:text-sm text-[#A8A8A8]">
+                Delivery Method
+              </p>
+              <p className="text-sm lg:text-base text-[#5C5C5C] capitalize">
                 {selectedOrder.delivery_method === "delivery"
                   ? "Delivery"
                   : "Pick Up"}
@@ -349,38 +360,48 @@ export default function OrdersManagement() {
             </div>
             {selectedOrder.delivery_method === "delivery" && (
               <div>
-                <p className="text-sm text-[#A8A8A8]">Delivery Fee</p>
-                <p className="text-[#5C5C5C]">
+                <p className="text-xs lg:text-sm text-[#A8A8A8]">
+                  Delivery Fee
+                </p>
+                <p className="text-sm lg:text-base text-[#5C5C5C]">
                   ₱{Number(selectedOrder.delivery_fee || 0).toFixed(2)}
                 </p>
               </div>
             )}
             {selectedOrder.payment && (
               <div>
-                <p className="text-sm text-[#A8A8A8]">Customer Payment</p>
-                <p className="text-[#5C5C5C] capitalize">
+                <p className="text-xs lg:text-sm text-[#A8A8A8]">
+                  Customer Payment
+                </p>
+                <p className="text-sm lg:text-base text-[#5C5C5C] capitalize">
                   {selectedOrder.payment}
                 </p>
               </div>
             )}
             {selectedOrder.user?.address && (
-              <div className="md:col-span-2">
-                <p className="text-sm text-[#A8A8A8]">Customer Address</p>
-                <p className="text-[#5C5C5C]">{selectedOrder.user.address}</p>
+              <div className="sm:col-span-2">
+                <p className="text-xs lg:text-sm text-[#A8A8A8]">
+                  Customer Address
+                </p>
+                <p className="text-sm lg:text-base text-[#5C5C5C]">
+                  {selectedOrder.user.address}
+                </p>
               </div>
             )}
           </div>
 
           {selectedOrder.delivery_method === "delivery" && (
-            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-              <p className="text-sm text-[#A8A8A8] mb-2">Assign Rider</p>
-              <div className="flex gap-3 items-center">
+            <div className="mb-4 lg:mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+              <p className="text-xs lg:text-sm text-[#A8A8A8] mb-2">
+                Assign Rider
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
                 {selectedOrder.assigned_rider ? (
-                  <span className="text-sm text-[#5C5C5C]">
+                  <span className="text-xs lg:text-sm text-[#5C5C5C]">
                     Assigned: {selectedOrder.assigned_rider.username}
                   </span>
                 ) : riders.length === 0 ? (
-                  <p className="text-sm text-red-500">
+                  <p className="text-xs lg:text-sm text-red-500">
                     No active riders available
                   </p>
                 ) : (
@@ -394,7 +415,7 @@ export default function OrdersManagement() {
                     }}
                     disabled={updatingOrderId === selectedOrder.id}
                   >
-                    <SelectTrigger className="w-full max-w-xs">
+                    <SelectTrigger className="w-full max-w-xs text-xs lg:text-sm">
                       <SelectValue placeholder="Select a rider" />
                     </SelectTrigger>
                     <SelectContent>
@@ -411,34 +432,46 @@ export default function OrdersManagement() {
           )}
 
           {selectedOrder.customer_remarks && (
-            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-              <p className="text-sm text-[#A8A8A8] mb-1">Customer Remarks</p>
-              <p className="text-[#5C5C5C]">{selectedOrder.customer_remarks}</p>
+            <div className="mb-4 lg:mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+              <p className="text-xs lg:text-sm text-[#A8A8A8] mb-1">
+                Customer Remarks
+              </p>
+              <p className="text-sm lg:text-base text-[#5C5C5C]">
+                {selectedOrder.customer_remarks}
+              </p>
             </div>
           )}
 
           {selectedOrder.reviewer_remarks && (
-            <div className="mb-6 p-4 bg-[#F5F5F5] rounded-xl">
-              <p className="text-sm text-[#A8A8A8] mb-1">Admin Remarks</p>
-              <p className="text-[#5C5C5C]">{selectedOrder.reviewer_remarks}</p>
+            <div className="mb-4 lg:mb-6 p-4 bg-[#F5F5F5] rounded-xl">
+              <p className="text-xs lg:text-sm text-[#A8A8A8] mb-1">
+                Admin Remarks
+              </p>
+              <p className="text-sm lg:text-base text-[#5C5C5C]">
+                {selectedOrder.reviewer_remarks}
+              </p>
             </div>
           )}
 
-          <div className="border-t border-[#E0E0E0] pt-4 mb-6">
-            <h3 className="text-lg text-[#5C5C5C] mb-4">Order Items</h3>
+          <div className="border-t border-[#E0E0E0] pt-4 mb-4 lg:mb-6">
+            <h3 className="text-base lg:text-lg text-[#5C5C5C] mb-4">
+              Order Items
+            </h3>
             <div className="space-y-3">
               {selectedOrder.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center"
+                  className="flex justify-between items-center gap-2"
                 >
-                  <div>
-                    <p className="text-[#5C5C5C]">{item.name}</p>
-                    <p className="text-sm text-[#A8A8A8]">
+                  <div className="flex-1">
+                    <p className="text-sm lg:text-base text-[#5C5C5C]">
+                      {item.name}
+                    </p>
+                    <p className="text-xs lg:text-sm text-[#A8A8A8]">
                       {item.size} × {item.quantity}
                     </p>
                   </div>
-                  <p className="text-[#D4A156]">
+                  <p className="text-sm lg:text-base text-[#D4A156]">
                     ₱{(Number(item.price) * item.quantity).toFixed(2)}
                   </p>
                 </div>
@@ -462,7 +495,7 @@ export default function OrdersManagement() {
                   ₱{selectedOrder.delivery_fee || 50}.00
                 </span>
               </div>
-              <div className="flex justify-between text-lg font-bold">
+              <div className="flex justify-between text-base lg:text-lg font-bold">
                 <span>Total:</span>
                 <span className="text-[#D4A156]">
                   ₱{Number(selectedOrder.total_amount).toFixed(2)}
@@ -471,7 +504,7 @@ export default function OrdersManagement() {
             </div>
           </div>
 
-          <div className="flex gap-3 flex-wrap">
+          <div className="flex gap-2 lg:gap-3 flex-wrap">
             {selectedOrder.status === "pending" && (
               <Button
                 onClick={() =>
@@ -486,7 +519,7 @@ export default function OrdersManagement() {
                   (selectedOrder.delivery_method === "delivery" &&
                     !selectedOrder.assigned_rider)
                 }
-                className="bg-[#D4A156] hover:bg-[#C59145] text-white"
+                className="bg-[#D4A156] hover:bg-[#C59145] text-white text-xs lg:text-sm"
               >
                 Accept Order
               </Button>
@@ -502,7 +535,7 @@ export default function OrdersManagement() {
                   )
                 }
                 disabled={updatingOrderId === selectedOrder.id}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs lg:text-sm"
               >
                 Start Preparing
               </Button>
@@ -518,7 +551,7 @@ export default function OrdersManagement() {
                   )
                 }
                 disabled={updatingOrderId === selectedOrder.id}
-                className="bg-purple-600 hover:bg-purple-700 text-white"
+                className="bg-purple-600 hover:bg-purple-700 text-white text-xs lg:text-sm"
               >
                 Out for Delivery
               </Button>
@@ -534,7 +567,7 @@ export default function OrdersManagement() {
                   )
                 }
                 disabled={updatingOrderId === selectedOrder.id}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-green-600 hover:bg-green-700 text-white text-xs lg:text-sm"
               >
                 Mark as Completed
               </Button>
@@ -542,11 +575,15 @@ export default function OrdersManagement() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <p className="text-[#A8A8A8] mb-4">
+        <div className="bg-white rounded-2xl shadow-md p-4 lg:p-6">
+          <p className="text-xs lg:text-sm text-[#A8A8A8] mb-4">
             This order is no longer in the current page/filter.
           </p>
-          <Button onClick={() => setSelectedOrderId(null)} variant="outline">
+          <Button
+            onClick={() => setSelectedOrderId(null)}
+            variant="outline"
+            className="text-xs lg:text-sm"
+          >
             Back to list
           </Button>
         </div>

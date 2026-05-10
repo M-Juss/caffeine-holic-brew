@@ -59,22 +59,30 @@ export default function Favorites() {
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl text-[#5C5C5C] mb-6">My Favorites</h1>
+    <div className="p-4 lg:p-6">
+      <h1 className="text-2xl lg:text-3xl text-[#5C5C5C] mb-4 lg:mb-6">
+        My Favorites
+      </h1>
       {isLoading ? (
         <p className="text-[#A8A8A8] text-sm">Loading favorites...</p>
       ) : favorites.length === 0 ? (
         <p className="text-[#A8A8A8] text-sm">No favorites yet.</p>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
           {favorites.map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow overflow-hidden cursor-pointer"
             >
-              <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
-              <div className="p-4">
-                <h3 className="text-[#5C5C5C] text-center">{item.name}</h3>
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-32 sm:h-40 object-cover"
+              />
+              <div className="p-3 lg:p-4">
+                <h3 className="text-[#5C5C5C] text-center text-sm lg:text-base">
+                  {item.name}
+                </h3>
               </div>
             </div>
           ))}

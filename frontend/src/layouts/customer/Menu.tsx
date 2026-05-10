@@ -231,15 +231,17 @@ export default function Menu() {
   };
 
   return (
-    <div className="flex gap-6 p-6">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 p-4 lg:p-6">
       <div className="flex-1">
-        <h1 className="text-3xl text-[#5C5C5C] mb-6">Our Menu</h1>
-        <div className="mb-6 flex flex-wrap gap-3">
+        <h1 className="text-2xl lg:text-3xl text-[#5C5C5C] mb-4 lg:mb-6">
+          Our Menu
+        </h1>
+        <div className="mb-4 lg:mb-6 flex flex-wrap gap-2 lg:gap-3">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`rounded-xl px-5 py-2 text-sm transition-colors ${
+              className={`rounded-xl px-4 lg:px-5 py-2 text-xs lg:text-sm transition-colors ${
                 activeCategory === category
                   ? "bg-[#D4A156] text-white"
                   : "bg-white text-[#5C5C5C] hover:bg-[#F0E2CA]"
@@ -252,7 +254,7 @@ export default function Menu() {
         {isLoadingMenus ? (
           <div className="text-[#A8A8A8] text-sm">Loading menu...</div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
             {filteredMenu.length > 0 ? (
               filteredMenu.map((item) => (
                 <MenuCard
@@ -272,7 +274,7 @@ export default function Menu() {
         )}
       </div>
 
-      <div className="w-96">
+      <div className="w-full lg:w-96">
         <CartPanel
           items={cartItems}
           onUpdateQuantity={handleUpdateQuantity}
